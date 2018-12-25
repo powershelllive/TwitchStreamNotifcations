@@ -6,16 +6,12 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Webhook.Models;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.IO;
 using Stream = TwitchLib.Webhook.Models.Stream;
-using System.Text;
-using System.Reflection;
 
 namespace Markekraus.TwitchStreamNotifications
 {
-    
+
     [StorageAccount("TwitchStreamStorage")]
     public static class TwitchWebhookIngestion
     {

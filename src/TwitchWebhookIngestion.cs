@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -5,64 +6,90 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Webhook.Models;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.IO;
+using Stream = TwitchLib.Webhook.Models.Stream;
+using System.Text;
+using System.Reflection;
 
 namespace Markekraus.TwitchStreamNotifications
 {
-    [StorageAccount("TwitchStreamNotifications")]
+    
+    [StorageAccount("TwitchStreamStorage")]
     public static class TwitchWebhookIngestion
     {
-        [FunctionName("TwitchWebhookIngestion")]
-        [return: Queue("StreamNotifications")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "TwitchWebhookIngestion/{StreamName}")] StreamData WebHook,
-            HttpRequest req,
-            string StreamName,
-            ICollector<Stream> queue,
-            ILogger log)
-        {
-            log.LogInformation("TwitchWebhookIngestion function processed a request.");
-            log.LogInformation($"Request contains {WebHook.Data.Count} objects.");
+        private const string SignatureHeader = "X-Hub-Signature";
+        private static readonly string HashSecret = Environment.GetEnvironmentVariable("TwitchSubscriptionsHashSecret");
 
-            if(!req.Headers.TryGetValue("X-Hub-Signature", out var signature))
+        [FunctionName("TwitchWebhookIngestion")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "TwitchWebhookIngestion/{StreamName}")] HttpRequest Req,
+            string StreamName,
+            [Queue("TwitchStreamActivity")] ICollector<Stream> queue,
+            ILogger Log)
+        {
+            Log.LogInformation($"TwitchWebhookIngestion function processed a request. StreamName: {StreamName}");
+            Log.LogInformation("Processing body stream");
+            Log.LogInformation($"CanSeek: {Req.Body.CanSeek}");
+
+            var bodyString = await Req.ReadAsStringAsync();
+
+            StreamData webhook;
+            try
             {
-                log.LogError("Missing X-Hub-Signature header");
+                webhook = JsonConvert.DeserializeObject<StreamData>(bodyString);
+            }
+            catch (Exception e)
+            {
+                Log.LogError($"Invalid JSON. exception {e.Message}. {bodyString}");
+                return new BadRequestResult();
+            }
+
+            Log.LogInformation($"Request contains {webhook.Data.Count} objects.");
+
+            if(!Req.Headers.TryGetValue(SignatureHeader, out var signature))
+            {
+                Log.LogError($"Missing {SignatureHeader} header");
                 return new BadRequestResult();
             }
 
             var fields = signature.ToString().Split("=");
             if (fields.Length != 2)
             {
-                log.LogError("Malformed X-Hub-Signature header. Missing '='?");
+                Log.LogError($"Malformed {SignatureHeader} header. Missing '='?");
                 return new BadRequestObjectResult(signature);
             }
 
             var header = fields[1];
             if (string.IsNullOrEmpty(header))
             {
-                log.LogError("Malformed X-Hub-Signature header. Signature is null or empty");
+                Log.LogError($"Malformed {SignatureHeader} header. Signature is null or empty");
                 return new BadRequestObjectResult(fields);
             }
 
             var expectedHash = Utility.FromHex(header);
             if (expectedHash == null)
             {
-                log.LogError("Malformed X-Hub-Signature header. Invalid hex signature");
-                return new BadRequestObjectResult("X-Hub-Signature");
+                Log.LogError($"Malformed {SignatureHeader} header. Invalid hex signature");
+                return new BadRequestObjectResult(SignatureHeader);
             }
 
-            var actualHash = await Utility.ComputeRequestBodySha256HashAsync(req, "supersecretpassword");
+            var actualHash = await Utility.ComputeRequestBodySha256HashAsync(Req, HashSecret);
 
             if(!Utility.SecretEqual(expectedHash, actualHash))
             {
-                log.LogError("Signature mismatch. actaulHash did not match expectedHash");
+                Log.LogError("Signature mismatch. actaulHash did not match expectedHash");
                 return new BadRequestObjectResult(signature);
             }
 
-            foreach (var item in WebHook.Data)
+            foreach (var item in webhook.Data)
             {
+                Log.LogInformation($"Queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}");
                 queue.Add(item);
             }
 
+            Log.LogInformation("Processing complete");
             return new OkResult();
         }
     }

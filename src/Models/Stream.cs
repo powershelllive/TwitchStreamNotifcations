@@ -13,6 +13,9 @@ namespace TwitchLib.Webhook.Models
         [JsonProperty("user_id")]
         public string UserId { get; set; }
 
+        [JsonProperty("user_name")]
+        public string UserName { get; set; }
+
         [JsonProperty("game_id")]
         public string GameId { get; set; }
 

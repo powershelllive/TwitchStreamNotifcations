@@ -22,7 +22,7 @@ namespace Markekraus.TwitchStreamNotifications
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "TwitchWebhookIngestion/{StreamName}")] HttpRequest Req,
             string StreamName,
-            [Queue("TwitchStreamActivity")] ICollector<Stream> queue,
+            [Queue("%TwitchStreamActivity%")] ICollector<Stream> queue,
             ILogger Log)
         {
             Log.LogInformation($"TwitchWebhookIngestion function processed a request. StreamName: {StreamName}");

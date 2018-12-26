@@ -24,7 +24,7 @@ $Body = @{
 $Hash = $hmacsha.ComputeHash([Text.Encoding]::ASCII.GetBytes($Body))
 $Hash = -join($Hash |ForEach-Object ToString X2)
 
-$StreamName = 'test'
+$StreamName = 'wjdtkdqhs'
 
 $Params = @{
     Uri = "http://localhost:7071/api/TwitchWebhookIngestion/{0}" -f $StreamName

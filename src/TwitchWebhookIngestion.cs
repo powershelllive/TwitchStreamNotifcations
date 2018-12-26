@@ -20,7 +20,7 @@ namespace Markekraus.TwitchStreamNotifications
 
         [FunctionName("TwitchWebhookIngestion")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "TwitchWebhookIngestion/{StreamName}")] HttpRequest Req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", "get", Route = "TwitchWebhookIngestion/{StreamName}")] HttpRequest Req,
             string StreamName,
             [Queue("%TwitchStreamActivity%")] ICollector<Stream> queue,
             ILogger Log)
@@ -28,6 +28,21 @@ namespace Markekraus.TwitchStreamNotifications
             Log.LogInformation($"TwitchWebhookIngestion function processed a request. StreamName: {StreamName}");
             Log.LogInformation("Processing body stream");
             Log.LogInformation($"CanSeek: {Req.Body.CanSeek}");
+
+            if(Req.Query.TryGetValue("hub.mode", out var hubMode)){
+                Log.LogInformation($"Received hub.mode Query string: {Req.QueryString}");
+                if (hubMode.ToString().ToLower() == "subscribe")
+                {
+                    Log.LogInformation($"Returning hub.challenge {Req.Query["hub.challenge"]}");
+                    return new OkObjectResult(Req.Query["hub.challenge"].ToString());
+                }
+                else
+                {
+                    Log.LogError($"Failed subscription: {Req.QueryString}");
+                    // Subscription hub expects 200 result when subscription fails
+                    return new OkResult();
+                }
+            }
 
             var bodyString = await Req.ReadAsStringAsync();
             Log.LogInformation("Payload:");

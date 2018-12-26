@@ -10,6 +10,11 @@ namespace Markekraus.TwitchStreamNotifications
     // Borrowing from https://markheath.net/post/randomly-scheduled-tweets-azure-functions
     public static class TwitterEventHandler
     {
+        private readonly static string ConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
+        private readonly static string ConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
+        private readonly static string AccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
+        private readonly static string AccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+
         [FunctionName("TwitterEventHandler")]
         public static void Run([QueueTrigger("%TwitterNotifications%", Connection = "TwitchStreamStorage")]TwitchLib.Webhook.Models.Stream StreamEvent, ILogger log)
         {
@@ -21,11 +26,7 @@ namespace Markekraus.TwitchStreamNotifications
                 return;
             }
 
-            var consumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
-            var consumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
-            var accessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
-            var accessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
-            Auth.SetUserCredentials(consumerKey, consumerSecret, accessToken, accessTokenSecret);
+            Auth.SetUserCredentials(ConsumerKey, ConsumerSecret, AccessToken, AccessTokenSecret);
 
             string myTweet = $"https://twitch.tv/{StreamEvent.UserName} {StreamEvent.UserName} is now streaming live!";
 

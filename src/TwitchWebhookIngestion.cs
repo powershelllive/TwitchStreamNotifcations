@@ -30,6 +30,8 @@ namespace Markekraus.TwitchStreamNotifications
             Log.LogInformation($"CanSeek: {Req.Body.CanSeek}");
 
             var bodyString = await Req.ReadAsStringAsync();
+            Log.LogInformation("Payload:");
+            Log.LogInformation(bodyString);
 
             StreamData webhook;
             try

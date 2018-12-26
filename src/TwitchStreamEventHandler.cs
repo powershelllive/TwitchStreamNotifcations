@@ -11,7 +11,7 @@ namespace Markekraus.TwitchStreamNotifications
         [FunctionName("TwitchStreamEventHandler")]
         public static void Run(
             [QueueTrigger("%TwitchStreamActivity%", Connection = "TwitchStreamStorage")]Stream StreamEvent,
-            [Queue("twitternotifications")] ICollector<Stream> TwitterQueue,
+            [Queue("%TwitterNotifications%")] ICollector<Stream> TwitterQueue,
             ILogger log)
         {
             log.LogInformation($"TwitchStreamEventHandler processing: {StreamEvent.UserName} type {StreamEvent.Type} started at {StreamEvent.StartedAt}");

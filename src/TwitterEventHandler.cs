@@ -13,9 +13,14 @@ namespace Markekraus.TwitchStreamNotifications
         [FunctionName("TwitterEventHandler")]
         public static void Run([QueueTrigger("%TwitterNotifications%", Connection = "TwitchStreamStorage")]TwitchLib.Webhook.Models.Stream StreamEvent, ILogger log)
         {
-            if (StreamEvent.Type != "live") { return; }
-
             log.LogInformation($"TwitchStreamEventHandler processing: {StreamEvent.UserName} type {StreamEvent.Type} started at {StreamEvent.StartedAt}");
+
+            if (StreamEvent.Type != "live")
+            { 
+                log.LogInformation($"Processing event skipped. type: {StreamEvent.Type}");
+                return;
+            }
+
             var consumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
             var consumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
             var accessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");

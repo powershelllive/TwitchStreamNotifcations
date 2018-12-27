@@ -265,20 +265,21 @@ Get-TwitchUser -StreamName markekraus -TwitchApp $TwitchApp
 $Result = Register-TwitchStreamWebhookSubscription -StreamName 'markekraus' -HubSecret $HubSecret -HubLeaseSeconds 0 -TwitchApp $TwitchApp
 
 $Subscriptions = Get-TwitchStreamWebhookSubscription -TwitchApp $TwitchApp -First 100
-$Subscriptions | Format-List StreamName, topic, callback
+$Subscriptions | Format-List StreamName, TwitterName, topic, callback
 $Subscriptions[0] | Unregister-TwitchStreamWebhookSubscription -HubSecret $HubSecret
 $Subscriptions | Unregister-TwitchStreamWebhookSubscription -HubSecret $HubSecret
 
+
 $Results = @(
-    'markekraus'
-    'corbob'
-    'halbaradkenafin'
-    'MrThomasRayner'
-    'steviecoaster'
-    'PowerShellTeam'
-    'tylerleonhardt'
-    'potatoqualitee'
-    'kevinmarquette'
-    'PowerShellDoug'
-    'glennsarti'
+    [PSCustomObject]@{StreamName='markekraus'; TwitterName='markekraus'}
+    [PSCustomObject]@{StreamName='corbob'; TwitterName='CoryKnox'}
+    [PSCustomObject]@{StreamName='halbaradkenafin'; TwitterName='halbaradkenafin'}
+    [PSCustomObject]@{StreamName='MrThomasRayner'; TwitterName='MrThomasRayner'}
+    [PSCustomObject]@{StreamName='steviecoaster'; TwitterName='steviecoaster'}
+    [PSCustomObject]@{StreamName='PowerShellTeam'; TwitterName='PowerShell_Team'}
+    [PSCustomObject]@{StreamName='tylerleonhardt'; TwitterName='TylerLeonhardt'}
+    [PSCustomObject]@{StreamName='potatoqualitee'; TwitterName='cl'}
+    [PSCustomObject]@{StreamName='kevinmarquette'; TwitterName='kevinmarquette'}
+    [PSCustomObject]@{StreamName='PowerShellDoug'; TwitterName='dfinke'}
+    [PSCustomObject]@{StreamName='glennsarti'; TwitterName='GlennSarti'}
 ) | Register-TwitchStreamWebhookSubscription -HubSecret $HubSecret -HubLeaseSeconds 864000 -TwitchApp $TwitchApp

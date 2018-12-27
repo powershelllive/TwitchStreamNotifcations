@@ -47,7 +47,7 @@ namespace Markekraus.TwitchStreamNotifications
             string myTweet = string.Format(TwitterTweetTemplate, streamUri, username);
             log.LogInformation($"Tweet: {myTweet}");
 
-            if (myTweet.Length > 140)
+            if (myTweet.Length > 280)
             {
                 log.LogWarning($"Tweet too long {myTweet.Length}");
             }

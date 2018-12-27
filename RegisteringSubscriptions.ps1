@@ -86,10 +86,14 @@ function Get-TwitchUser {
 function Register-TwitchStreamWebhookSubscription {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [string[]]
+        [string]
         $StreamName,
+
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]
+        $TwitterName,
 
         [string]
         $HubSecret,
@@ -109,34 +113,37 @@ function Register-TwitchStreamWebhookSubscription {
     )
 
     process {
-        foreach ($Stream in $StreamName) {
-            $UserId = (Get-TwitchUser -StreamName $Stream -TwitchApp $TwitchApp).id
-            $Body = @{
-                "hub.callback" = "{0}/{1}" -f $WebHookBaseUri, $Stream
-                "hub.topic" = "https://api.twitch.tv/helix/streams?user_id={0}" -f $UserId
-                "hub.mode" = "subscribe"
-                "hub.lease_seconds" = $HubLeaseSeconds
-            }
+        $UserId = (Get-TwitchUser -StreamName $StreamName -TwitchApp $TwitchApp).id
+        $CallBackUri = if ($TwitterName) {
+            "{0}/{1}/{2}" -f $WebHookBaseUri, $StreamName, $TwitterName
+        } else {
+            "{0}/{1}" -f $WebHookBaseUri, $StreamName
+        }
+        $Body = @{
+            "hub.callback" = $CallBackUri
+            "hub.topic" = "https://api.twitch.tv/helix/streams?user_id={0}" -f $UserId
+            "hub.mode" = "subscribe"
+            "hub.lease_seconds" = $HubLeaseSeconds
+        }
 
-            if ($HubSecret) {
-                $Body['hub.secret'] = $HubSecret
-            }
+        if ($HubSecret) {
+            $Body['hub.secret'] = $HubSecret
+        }
 
-            $Params = @{
-                Uri = 'https://api.twitch.tv/helix/webhooks/hub'
-                Method = 'Post'
-                Body = $Body | ConvertTo-Json -Depth 10
-                Headers = @{
-                    'Client-ID' = $TwitchApp.ClientId
-                }
-                ContentType = 'application/json'
+        $Params = @{
+            Uri = 'https://api.twitch.tv/helix/webhooks/hub'
+            Method = 'Post'
+            Body = $Body | ConvertTo-Json -Depth 10
+            Headers = @{
+                'Client-ID' = $TwitchApp.ClientId
             }
-            $Null = Invoke-WebRequest @Params
-            Start-Sleep -Milliseconds 100
-            Get-TwitchStreamWebhookSubscription -TwitchApp $TwitchApp | where-object {
-                $_.callback -eq $Body.'hub.callback' -and
-                $_.topic    -eq $Body.'hub.topic'
-            }
+            ContentType = 'application/json'
+        }
+        $Null = Invoke-WebRequest @Params
+        Start-Sleep -Milliseconds 100
+        Get-TwitchStreamWebhookSubscription -TwitchApp $TwitchApp | where-object {
+            $_.callback -eq $Body.'hub.callback' -and
+            $_.topic    -eq $Body.'hub.topic'
         }
     }
 }
@@ -170,8 +177,20 @@ function Get-TwitchStreamWebhookSubscription {
         }
         $Result = (Invoke-RestMethod @Params).data
         $Result | ForEach-Object{
-            $StreamName = $_.callback -split '/' | Select-Object -Last 1
+            $Parts = $_.callback -split '/'
+            switch ($Parts.Count) {
+                6 {
+                    $StreamName = $Parts[-1]
+                    $TwitterName = $null
+                }
+                7 {
+                    $StreamName = $Parts[-2]
+                    $TwitterName = $Parts[-1]
+                }
+                Default {}
+            }
             $_ | Add-Member -MemberType NoteProperty -Name StreamName -Value $StreamName
+            $_ | Add-Member -MemberType NoteProperty -Name TwitterName -Value $TwitterName
             $_ | Add-Member -MemberType NoteProperty -Name TwitchApp -Value $TwitchApp -PassThru
         } 
     }
@@ -184,6 +203,10 @@ function Unregister-TwitchStreamWebhookSubscription {
         [ValidateNotNullOrEmpty()]
         [string]
         $StreamName,
+
+        [Parameter(ValueFromPipelineByPropertyName)]
+        [string]
+        $TwitterName,
 
         [string]
         $HubSecret,
@@ -200,8 +223,13 @@ function Unregister-TwitchStreamWebhookSubscription {
 
     process {
         $UserId = (Get-TwitchUser -StreamName $StreamName -TwitchApp $TwitchApp).id
+        $CallBackUri = if ($TwitterName) {
+            "{0}/{1}/{2}" -f $WebHookBaseUri, $StreamName, $TwitterName
+        } else {
+            "{0}/{1}" -f $WebHookBaseUri, $StreamName
+        }
         $Body = @{
-            "hub.callback" = "{0}/{1}" -f $WebHookBaseUri, $StreamName
+            "hub.callback" = $CallBackUri
             "hub.topic" = "https://api.twitch.tv/helix/streams?user_id={0}" -f $UserId
             "hub.mode" = "unsubscribe"
             "hub.lease_seconds" = 864000
@@ -238,7 +266,8 @@ $Result = Register-TwitchStreamWebhookSubscription -StreamName 'markekraus' -Hub
 
 $Subscriptions = Get-TwitchStreamWebhookSubscription -TwitchApp $TwitchApp -First 100
 $Subscriptions | Format-List StreamName, topic, callback
-$Subscriptions[0] | Unregister-TwitchStreamWebhookSubscription -Verbose -HubSecret $HubSecret
+$Subscriptions[0] | Unregister-TwitchStreamWebhookSubscription -HubSecret $HubSecret
+$Subscriptions | Unregister-TwitchStreamWebhookSubscription -HubSecret $HubSecret
 
 $Results = @(
     'markekraus'
@@ -252,4 +281,4 @@ $Results = @(
     'kevinmarquette'
     'PowerShellDoug'
     'glennsarti'
-) | Register-TwitchStreamWebhookSubscription -HubSecret $HubSecret -HubLeaseSeconds (60*60*24) -TwitchApp $TwitchApp
+) | Register-TwitchStreamWebhookSubscription -HubSecret $HubSecret -HubLeaseSeconds 864000 -TwitchApp $TwitchApp

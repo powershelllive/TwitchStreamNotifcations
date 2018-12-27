@@ -1,13 +1,14 @@
+Enable-Tls -Tls12 -Confirm:$false
 $secret = 'testing123'
 $hmacsha = New-Object System.Security.Cryptography.HMACSHA256
-$hmacsha.key = [Text.Encoding]::ASCII.GetBytes($secret)
+$hmacsha.key = [Text.Encoding]::UTF8.GetBytes($secret)
 
 $Body = @{
     data = @(
         @{
           "id" = "0123456789"
-          "user_id" = "5678"
-          "user_name" = "wjdtkdqhs"
+          "user_id" = "403106760"
+          "user_name" = "markekraus"
           "game_id" = "21779"
           "community_ids" = @()
           "type" = "live"
@@ -21,10 +22,10 @@ $Body = @{
 } | ConvertTo-Json
 
 
-$Hash = $hmacsha.ComputeHash([Text.Encoding]::ASCII.GetBytes($Body))
-$Hash = -join($Hash |ForEach-Object ToString X2)
+$Hash = $hmacsha.ComputeHash([Text.Encoding]::UTF8.GetBytes($Body))
+$Hash = $(-join($Hash |ForEach-Object ToString X2)).ToLower()
 
-$StreamName = 'wjdtkdqhs'
+$StreamName = 'markekraus'
 
 $Params = @{
     Uri = "http://localhost:7071/api/TwitchWebhookIngestion/{0}" -f $StreamName

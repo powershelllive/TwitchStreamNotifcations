@@ -30,6 +30,7 @@ namespace Markekraus.TwitchStreamNotifications
             Auth.SetUserCredentials(ConsumerKey, ConsumerSecret, AccessToken, AccessTokenSecret);
 
             string myTweet = $"https://twitch.tv/{StreamEvent.UserName} {StreamEvent.UserName} is now streaming live!";
+            log.LogInformation($"Tweet: {myTweet}");
 
             if (myTweet.Length > 140)
             {

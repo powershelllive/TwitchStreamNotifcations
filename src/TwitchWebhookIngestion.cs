@@ -92,12 +92,17 @@ namespace Markekraus.TwitchStreamNotifications
 
             if(!Utility.SecretEqual(expectedHash, actualHash))
             {
-                Log.LogError("Signature mismatch. actaulHash did not match expectedHash");
+                Log.LogError($"Signature mismatch. actaulHash {Convert.ToBase64String(actualHash)} did not match expectedHash {Convert.ToBase64String(expectedHash)}");
                 return new BadRequestObjectResult(signature);
             }
 
             foreach (var item in webhook.Data)
             {
+                if (string.IsNullOrWhiteSpace(item.UserName))
+                {
+                    Log.LogInformation($"Setting missing Username to {StreamName}");
+                    item.UserName = StreamName;
+                }
                 Log.LogInformation($"Queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}");
                 queue.Add(item);
             }

@@ -31,7 +31,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             if(Req.Query.TryGetValue("hub.mode", out var hubMode)){
                 Log.LogInformation($"Received hub.mode Query string: {Req.QueryString}");
-                if (hubMode.ToString().ToLower() == "subscribe")
+                if (hubMode.ToString().ToLower() == "subscribe" || hubMode.ToString().ToLower() == "unsubscribe")
                 {
                     Log.LogInformation($"Returning hub.challenge {Req.Query["hub.challenge"]}");
                     return new OkObjectResult(Req.Query["hub.challenge"].ToString());

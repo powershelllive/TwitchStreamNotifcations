@@ -49,3 +49,4 @@ Currently, the only action it takes is to create new tweets when a Twitch Stream
 * `TwitterAccessToken` - Twitter Access token for the user that wills send out tweets.
 * `TwitterAccessTokenSecret` - Twitter Access Token Secret for the user that wills send out tweets.
 * `DISABLE_NOTIFICATIONS` - When set to `true`, notification event handlers (e.g. `TwitterEventHandler`) will not perform notification actions. Used for troubleshooting and debugging.
+* `TwitterTweetTemplate` - String format template. Called with `string.Format(TwitterTweetTemplate, streamUri, username);` where `streamUri` is the URL to the twitch stream and the `username` is either the twitch stream or twitter handle (if a twitter handle was provided when registering).

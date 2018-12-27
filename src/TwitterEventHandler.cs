@@ -44,7 +44,7 @@ namespace Markekraus.TwitchStreamNotifications
             string streamUri = $"https://twitch.tv/{StreamEvent.UserName}";
             log.LogInformation($"Stream Uri: {streamUri}");
 
-            string myTweet = string.Format(TwitterTweetTemplate, streamUri, username);
+            string myTweet = string.Format(TwitterTweetTemplate, streamUri, username, DateTime.UtcNow.ToString("u"));
             log.LogInformation($"Tweet: {myTweet}");
 
             if (myTweet.Length > 280)

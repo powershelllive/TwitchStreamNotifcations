@@ -20,14 +20,15 @@ namespace Markekraus.TwitchStreamNotifications
 
         [FunctionName("TwitchWebhookIngestion")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", "get", Route = "TwitchWebhookIngestion/{StreamName}")] HttpRequest Req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", "get", Route = "TwitchWebhookIngestion/{StreamName}/{TwitterName?}")] HttpRequest Req,
             string StreamName,
+            string TwitterName,
             [Queue("%TwitchStreamActivity%")] ICollector<Stream> queue,
             ILogger Log)
         {
-            Log.LogInformation($"TwitchWebhookIngestion function processed a request. StreamName: {StreamName}");
-            Log.LogInformation("Processing body stream");
-            Log.LogInformation($"CanSeek: {Req.Body.CanSeek}");
+            Log.LogInformation($"TwitchWebhookIngestion function processed a request.");
+            Log.LogInformation($"StreamName: {StreamName}");
+            Log.LogInformation($"TwitterName: {TwitterName}");
 
             if(Req.Query.TryGetValue("hub.mode", out var hubMode)){
                 Log.LogInformation($"Received hub.mode Query string: {Req.QueryString}");
@@ -43,6 +44,13 @@ namespace Markekraus.TwitchStreamNotifications
                     return new OkResult();
                 }
             }
+            else
+            {
+                Log.LogInformation("No hub.mode supplied.");
+            }
+
+            Log.LogInformation("Processing body stream");
+            Log.LogInformation($"CanSeek: {Req.Body.CanSeek}");
 
             var bodyString = await Req.ReadAsStringAsync();
             Log.LogInformation("Payload:");
@@ -103,6 +111,13 @@ namespace Markekraus.TwitchStreamNotifications
                     Log.LogInformation($"Setting missing Username to {StreamName}");
                     item.UserName = StreamName;
                 }
+
+                if(!string.IsNullOrWhiteSpace(TwitterName))
+                {
+                    Log.LogInformation($"Setting TwitterName to {TwitterName}");
+                    item.TwitterName = TwitterName;
+                }
+
                 Log.LogInformation($"Queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}");
                 queue.Add(item);
             }

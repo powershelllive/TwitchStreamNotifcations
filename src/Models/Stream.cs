@@ -40,5 +40,8 @@ namespace TwitchLib.Webhook.Models
         [JsonProperty("thumbnail_url")]
         public string ThumbnailUrl { get; set; }
 
+        [JsonProperty("twittername")]
+        public string TwitterName { get; set; }
+
     }
 }

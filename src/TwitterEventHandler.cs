@@ -15,6 +15,7 @@ namespace Markekraus.TwitchStreamNotifications
         private readonly static string ConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
         private readonly static string AccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
         private readonly static string AccessTokenSecret = Environment.GetEnvironmentVariable("TwitterAccessTokenSecret");
+        private readonly static string TwitterTweetTemplate = Environment.GetEnvironmentVariable("TwitterTweetTemplate");
 
         [FunctionName("TwitterEventHandler")]
         public static void Run([QueueTrigger("%TwitterNotifications%", Connection = "TwitchStreamStorage")]TwitchLib.Webhook.Models.Stream StreamEvent, ILogger log)
@@ -27,9 +28,23 @@ namespace Markekraus.TwitchStreamNotifications
                 return;
             }
 
-            Auth.SetUserCredentials(ConsumerKey, ConsumerSecret, AccessToken, AccessTokenSecret);
 
-            string myTweet = $"https://twitch.tv/{StreamEvent.UserName} {StreamEvent.UserName} is now streaming live!";
+            string username;
+            if (string.IsNullOrWhiteSpace(StreamEvent.TwitterName))
+            {
+                username = StreamEvent.UserName;
+                log.LogInformation($"Stream username {username} will be used");
+            }
+            else
+            {
+                username = $"@{StreamEvent.TwitterName}";
+                log.LogInformation($"Twitter username {username} will be used");
+            }
+
+            string streamUri = $"https://twitch.tv/{StreamEvent.UserName}";
+            log.LogInformation($"Stream Uri: {streamUri}");
+
+            string myTweet = string.Format(TwitterTweetTemplate, streamUri, username);
             log.LogInformation($"Tweet: {myTweet}");
 
             if (myTweet.Length > 140)
@@ -42,6 +57,7 @@ namespace Markekraus.TwitchStreamNotifications
                 return;
             }
 
+            Auth.SetUserCredentials(ConsumerKey, ConsumerSecret, AccessToken, AccessTokenSecret);
             var publishedTweet = Tweet.PublishTweet(myTweet);
             // by default TweetInvi doesn't throw exceptions: https://github.com/linvi/tweetinvi/wiki/Exception-Handling
             if (publishedTweet == null)

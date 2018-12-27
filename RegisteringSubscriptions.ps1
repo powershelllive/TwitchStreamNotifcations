@@ -123,7 +123,7 @@ function Register-TwitchStreamWebhookSubscription {
                 Method = 'Post'
                 Body = $Body | ConvertTo-Json -Depth 10
                 Headers = @{
-                    'Client-ID' = $TwitchAccessToken.TwitchApp.ClientId
+                    'Client-ID' = $TwitchApp.ClientId
                 }
                 ContentType = 'application/json'
             }
@@ -138,5 +138,6 @@ $HubSecret = Read-Host -AsSecureString
 $HubSecret = ([pscredential]::new('foo', $HubSecret)).GetNetworkCredential().Password
 
 $TwitchApp = New-TwitchApp -AppCredentials $AppCreds -RedirectUri 'https://127.0.0.1/'
+Get-TwitchUser -StreamName markekraus -TwitchApp $TwitchApp
 $Result = Register-TwitchStreamWebhookSubscription -StreamName 'markekraus' -HubSecret $HubSecret -HubLeaseSeconds 0 -TwitchApp $TwitchApp
 $Result

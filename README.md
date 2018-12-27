@@ -1,6 +1,6 @@
 # TwitchStreamNotifications
 
-This is an Azure Functions project which allows for notifications to services such as twitter, slack, and discord when a streaming channel has gone online.
+This is an Azure Functions project which allows for notifications to services such as twitter, slack, and discord when a streaming channel has gone live.
 
 ## Architecture
 
@@ -48,3 +48,4 @@ Currently, the only action it takes is to create new tweets when a Twitch Stream
 * `TwitterConsumerSecret` - Twitter App Consumer API secret.
 * `TwitterAccessToken` - Twitter Access token for the user that wills send out tweets.
 * `TwitterAccessTokenSecret` - Twitter Access Token Secret for the user that wills send out tweets.
+* `DISABLE_NOTIFICATIONS` - When set to `true`, notification event handlers (e.g. `TwitterEventHandler`) will not perform notification actions. Used for troubleshooting and debugging.

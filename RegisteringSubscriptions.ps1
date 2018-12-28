@@ -282,4 +282,5 @@ $Results = @(
     [PSCustomObject]@{StreamName='kevinmarquette'; TwitterName='kevinmarquette'}
     [PSCustomObject]@{StreamName='PowerShellDoug'; TwitterName='dfinke'}
     [PSCustomObject]@{StreamName='glennsarti'; TwitterName='GlennSarti'}
+    [PSCustomObject]@{StreamName='veronicageek'; TwitterName='veronicageek'}
 ) | Register-TwitchStreamWebhookSubscription -HubSecret $HubSecret -HubLeaseSeconds 864000 -TwitchApp $TwitchApp

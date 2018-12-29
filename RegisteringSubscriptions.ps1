@@ -284,3 +284,57 @@ $Results = @(
     [PSCustomObject]@{StreamName='glennsarti'; TwitterName='GlennSarti'}
     [PSCustomObject]@{StreamName='veronicageek'; TwitterName='veronicageek'}
 ) | Register-TwitchStreamWebhookSubscription -HubSecret $HubSecret -HubLeaseSeconds 864000 -TwitchApp $TwitchApp
+
+$FuncCode = Read-Host -AsSecureString
+$FuncCode = ([pscredential]::new('foo', $HubSecret)).GetNetworkCredential().Password
+
+function Invoke-TwitchSubscriptionRegistration {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Path,
+
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $FunctionSecret,
+
+        [Parameter(DontShow)]
+        [string]
+        $FunctionUri = 'https://twitchstreamnotifications.azurewebsites.net/api/TwitchSubscriptionRegistration'
+        )
+
+    end {
+        try {
+            $Body = Get-Content -Raw -Path $Path
+        } catch {
+            $PSCmdlet.ThrowTerminatingError($_)
+        }
+        $Params = @{
+            Headers = @{
+                'x-functions-key' = $FunctionSecret
+            }
+            Uri = $FunctionUri
+            Method = 'POST'
+            Body = $Body
+            ContentType = 'application/json'
+        }
+        Invoke-RestMethod @Params
+    }
+}
+
+$Result = Invoke-TwitchSubscriptionRegistration -Path 'config/Subscriptions.json' -FunctionSecret $FuncCode
+'-----------------'
+'Added:'
+$Result.AddSubscriptions
+' '
+'Removed:'
+$Result.RemoveSubscriptions
+' '
+'Requested:'
+$Result.RequestSubscriptions
+' '
+'Current:'
+$Result.CurrentSubscriptions.subscription

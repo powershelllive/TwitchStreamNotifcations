@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
 namespace Markekraus.TwitchStreamNotifications
 {
-    public class Utility
+    public static class Utility
     {
         public static async Task<byte[]> ComputeRequestBodySha256HashAsync(
             HttpRequest request,

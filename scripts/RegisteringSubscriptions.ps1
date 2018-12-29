@@ -308,7 +308,7 @@ function Invoke-TwitchSubscriptionRegistration {
 
     end {
         try {
-            $Body = Get-Content -Raw -Path $Path
+            $Body = Get-Content -Raw -Path $Path -ErrorAction stop
         } catch {
             $PSCmdlet.ThrowTerminatingError($_)
         }

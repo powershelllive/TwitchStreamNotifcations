@@ -4,26 +4,43 @@ This is an Azure Functions project which allows for notifications to services su
 
 ## Architecture
 
+### Webhook
+
 Subscribed Twitch webhooks will submit to the `TwitchWebhookIngestion` function.
 The `TwitchWebhookIngestion` is responsible to validating the webhook payload and then queues it in the `TwitchStreamActivity` queue.
 The `TwitchStreamEventHandler` is triggered by the `TwitchStreamActivity` and is responsible for directing the event to notification handler queues.
 For now, the `TwitchStreamEventHandler` only queues the event to the `TwitterNotifications` queue.
 The `TwitterEventHandler` function is triggered by the `TwitterNotifications` and will create a tweet stating a channel has gone live.
 
+### Subscription Management
+
+A JSON payload like the one in [Subscriptions.json](./config/Subscriptions.json) will be posted to `TwitchSubscriptionRegistration` function using the function key.
+The `TwitchSubscriptionRegistration` will verify the requested subscriptions against the current subscriptions registered with Twitch.
+Requested subscriptions that are missing from the current registered subscriptions will be added to the `TwitchSubscribeQueue` queue.
+Currently registered subscriptions that are not included in the requested subscriptions will be added to the `TwitchUnsubscribeQueue` queue.
+
+The `TwitchSubscriptionAdd` will be triggered by the `TwitchSubscribeQueue` and will send a subscribe request to the Twitch API.
+
+The `TwitchSubscriptionRemove` will be triggered by the `TwitchUnsubscribeQueue` and will send an unsubscribe request to the Twitch API.
+
+Subscribe and Unsubscribe requests to the Twitch API will result in the Twitch API making a callback to the `TwitchWebhookIngestion` which will be responsible for returning the `hub.challenge` query parameter back to the Twitch API.
+
 ## Functions
 
-### TwitchWebhookIngestion
+### Webhook Functions
+
+#### TwitchWebhookIngestion
 
 * Trigger: Http
-* Inputs: HttpRequest, StreamName
-* Route: `TwitchWebhookIngestion/{StreamName}`
+* Inputs: HttpRequest, StreamName, TwitterName
+* Route: `TwitchWebhookIngestion/{StreamName}/{TwitterName?}`
 * Output: `TwitchStreamActivity` queue
 
 This is the endpoint where Twitch submits webhook payloads.
 It is responsible for validating the payload against the provided hash and the calculated hash using the `TwitchSubscriptionsHashSecret`.
 Valid webhook payloads are then enqueued in the `TwitchStreamEventHandler queue.
 
-### TwitchStreamEventHandler
+#### TwitchStreamEventHandler
 
 * Trigger: `TwitchStreamActivity` queue
 * Output: `TwitterNotifications` queue
@@ -31,12 +48,38 @@ Valid webhook payloads are then enqueued in the `TwitchStreamEventHandler queue.
 This function is responsible for routing Twitch Stream events to various event handlers.
 Currently, the only event handler is `TwitterEventHandler`.
 
-### TwitterEventHandler
+#### TwitterEventHandler
 
 * Trigger: `TwitterNotifications` queue
 
 This function is an Event handler for Twitter.
 Currently, the only action it takes is to create new tweets when a Twitch Stream has gone live.
+
+### Subscription Management Functions
+
+#### TwitchSubscriptionRegistration
+
+* Trigger: Http
+* Inputs: HttpRequest (Json payload [Subscriptions.json](./config/Subscriptions.json))
+* Route: `TwitchSubscriptionRegistration`
+* Output: `TwitchSubscribeQueue` queue, `TwitchUnsubscribeQueue`
+
+Provides idempotent Twitch webhook subscription registrations based on the JSON payload.
+The function queries the Twitch API for currently registered subscriptions and compares them to the requested subscriptions.
+Missing subscriptions will be added to the `TwitchSubscribeQueue`.
+Extra subscriptions will be added to the `TwitchUnsubscribeQueue`.
+
+#### TwitchSubscriptionAdd
+
+* Trigger: `TwitchSubscribeQueue`
+
+Subscriptions from the `TwitchSubscribeQueue` will be sent to the Twitch API to be subscribed.
+
+#### TwitchSubscriptionRemove
+
+* Trigger: `TwitchUnsubscribeQueue`
+
+Subscriptions from the `TwitchUnsubscribeQueue` will be sent to the Twitch API to be unsubscribed.
 
 ## Application Settings
 

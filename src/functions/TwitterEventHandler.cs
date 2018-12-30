@@ -30,14 +30,14 @@ namespace Markekraus.TwitchStreamNotifications
 
 
             string username;
-            if (string.IsNullOrWhiteSpace(StreamEvent.TwitterName))
+            if (string.IsNullOrWhiteSpace(StreamEvent.Subscription.TwitterName))
             {
                 username = StreamEvent.UserName;
                 log.LogInformation($"Stream username {username} will be used");
             }
             else
             {
-                username = $"@{StreamEvent.TwitterName}";
+                username = $"@{StreamEvent.Subscription.TwitterName}";
                 log.LogInformation($"Twitter username {username} will be used");
             }
 

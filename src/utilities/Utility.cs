@@ -13,6 +13,7 @@ namespace Markekraus.TwitchStreamNotifications
 {
     public static class Utility
     {
+        public const string NameNullString = "--";
         public static async Task<byte[]> ComputeRequestBodySha256HashAsync(
             HttpRequest request,
             string secret)

@@ -35,9 +35,14 @@ namespace Markekraus.TwitchStreamNotifications.Models
                         subscription.TwitchName = parts[5];
                     }
 
-                    if (parts.Length == 7)
+                    if (parts.Length >= 7 && parts[6] != Utility.NameNullString)
                     {
                         subscription.TwitterName = parts[6];
+                    }
+
+                    if (parts.Length >= 8 && parts[7] != Utility.NameNullString)
+                    {
+                        subscription.DiscordName = parts[7];
                     }
                     return subscription;
                 }

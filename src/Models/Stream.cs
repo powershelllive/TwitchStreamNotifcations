@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Markekraus.TwitchStreamNotifications.Models;
 
 namespace TwitchLib.Webhook.Models
 {
@@ -40,8 +41,8 @@ namespace TwitchLib.Webhook.Models
         [JsonProperty("thumbnail_url")]
         public string ThumbnailUrl { get; set; }
 
-        [JsonProperty("twittername")]
-        public string TwitterName { get; set; }
+        [JsonProperty("subscription")]
+        public TwitchSubscription Subscription { get; set; }
 
     }
 }

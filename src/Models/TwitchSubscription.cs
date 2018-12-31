@@ -11,5 +11,8 @@ namespace Markekraus.TwitchStreamNotifications.Models
 
         [JsonProperty("twittername")]
         public string TwitterName { get; set; }
+
+        [JsonProperty("discordname")]
+        public string DiscordName { get; set; }
     }
 }

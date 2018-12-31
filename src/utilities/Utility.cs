@@ -13,6 +13,10 @@ namespace Markekraus.TwitchStreamNotifications
 {
     public static class Utility
     {
+        public const string NameNullString = "--";
+        public const string DISABLE_NOTIFICATIONS = "DISABLE_NOTIFICATIONS";
+        public const string ApplicationJsonContentType = "application/json";
+
         public static async Task<byte[]> ComputeRequestBodySha256HashAsync(
             HttpRequest request,
             string secret)

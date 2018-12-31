@@ -51,7 +51,7 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(requestUri)
             };
-            message.Headers.TryAddWithoutValidation("Accept","application/json");
+            message.Headers.TryAddWithoutValidation("Accept",Utility.ApplicationJsonContentType);
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
             LogHttpResponse(response, "GetOAuthResponse", Log);
 
@@ -159,19 +159,14 @@ namespace Markekraus.TwitchStreamNotifications
             Log.LogInformation("SubscriptionActionTwitchStreamWebhook Begin");
             Log.LogInformation($"TwitchName: {Subscription.TwitchName}");
             Log.LogInformation($"TwitterName: {Subscription.TwitterName}");
+            Log.LogInformation($"DiscordName: {Subscription.DiscordName}");
 
             var userId = await GetTwitchStreamUserId(Subscription.TwitchName, Log);
             Log.LogInformation($"UserID: {userId}");
 
-            string callbackUri;
-            if (string.IsNullOrWhiteSpace(Subscription.TwitterName))
-            {
-                callbackUri = $"{TwitchWebhookBaseUri}/{Subscription.TwitchName}";
-            }
-            else
-            {
-                callbackUri = $"{TwitchWebhookBaseUri}/{Subscription.TwitchName}/{Subscription.TwitterName}";
-            }
+            var twitterPart = string.IsNullOrWhiteSpace(Subscription.TwitterName) ? Utility.NameNullString : Subscription.TwitterName;
+            var discordPart = string.IsNullOrWhiteSpace(Subscription.DiscordName) ? Utility.NameNullString : Subscription.DiscordName;
+            var callbackUri = $"{TwitchWebhookBaseUri}/{Subscription.TwitchName}/{twitterPart}/{discordPart}";
             Log.LogInformation($"CallbackUri: {callbackUri}");
 
             var hubTopic = $"{TwitchStreamsEndpointUri}?user_id={userId}";
@@ -190,7 +185,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             var message = new HttpRequestMessage()
             {
-                Content = new StringContent(requestBody, Encoding.UTF8, "application/json"),
+                Content = new StringContent(requestBody, Encoding.UTF8, Utility.ApplicationJsonContentType),
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(TwitchWebhooksHubEndpointUri)
             };

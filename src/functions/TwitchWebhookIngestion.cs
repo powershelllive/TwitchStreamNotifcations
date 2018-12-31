@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Webhook.Models;
 using Newtonsoft.Json;
+using Markekraus.TwitchStreamNotifications.Models;
 using Stream = TwitchLib.Webhook.Models.Stream;
 
 namespace Markekraus.TwitchStreamNotifications
@@ -20,15 +21,24 @@ namespace Markekraus.TwitchStreamNotifications
 
         [FunctionName("TwitchWebhookIngestion")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", "get", Route = "TwitchWebhookIngestion/{StreamName}/{TwitterName?}")] HttpRequest Req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", "get", Route = "TwitchWebhookIngestion/{StreamName}/{TwitterName?}/{DiscordName?}")] HttpRequest Req,
             string StreamName,
             string TwitterName,
+            string DiscordName,
             [Queue("%TwitchStreamActivity%")] ICollector<Stream> queue,
             ILogger Log)
         {
             Log.LogInformation($"TwitchWebhookIngestion function processed a request.");
             Log.LogInformation($"StreamName: {StreamName}");
             Log.LogInformation($"TwitterName: {TwitterName}");
+            Log.LogInformation($"DiscordName: {DiscordName}");
+
+            var subscription = new TwitchSubscription()
+            {
+                TwitchName = StreamName,
+                TwitterName = TwitterName != Utility.NameNullString ? TwitterName : string.Empty,
+                DiscordName = DiscordName != Utility.NameNullString ? DiscordName : string.Empty
+            };
 
             if(Req.Query.TryGetValue("hub.mode", out var hubMode)){
                 Log.LogInformation($"Received hub.mode Query string: {Req.QueryString}");
@@ -112,11 +122,7 @@ namespace Markekraus.TwitchStreamNotifications
                     item.UserName = StreamName;
                 }
 
-                if(!string.IsNullOrWhiteSpace(TwitterName))
-                {
-                    Log.LogInformation($"Setting TwitterName to {TwitterName}");
-                    item.TwitterName = TwitterName;
-                }
+                item.Subscription = subscription;
 
                 Log.LogInformation($"Queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}");
                 queue.Add(item);

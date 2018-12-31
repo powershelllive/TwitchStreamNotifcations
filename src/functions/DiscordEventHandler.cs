@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace Markekraus.TwitchStreamNotifications
       private static HttpClient DiscordClient = new HttpClient();
 
         [FunctionName("DiscordEventHandler")]
-        public static async void Run(
+        public static async Task Run(
             [QueueTrigger("%DiscordNotifications%", Connection = "TwitchStreamStorage")]
             TwitchLib.Webhook.Models.Stream StreamEvent,
             ILogger log)

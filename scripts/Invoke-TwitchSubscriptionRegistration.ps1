@@ -47,18 +47,18 @@ $Result = Invoke-TwitchSubscriptionRegistration @invokeTwitchSubscriptionRegistr
 ' '
 '-----------------'
 'Requested Subscriptions:'
-$Result.RequestSubscriptions | Format-Table -AutoSize twitchname, twittername
+$Result.RequestSubscriptions | Format-Table -AutoSize twitchname, twittername, discordname
 ' '
 '-----------------'
 'Current Subscriptions:'
-$Result.CurrentSubscriptions.subscription | Format-Table -AutoSize twitchname, twittername
+$Result.CurrentSubscriptions.subscription | Format-Table -AutoSize twitchname, twittername, discordname
 ' '
 '-----------------'
 'Queued for Subscribe'
-$Result.AddSubscriptions | Format-Table -AutoSize twitchname, twittername
+$Result.AddSubscriptions | Format-Table -AutoSize twitchname, twittername, discordname
 ' '
 '-----------------'
 'Queued for Unsubscribe'
-$Result.RemoveSubscriptions | Format-Table -AutoSize twitchname, twittername
+$Result.RemoveSubscriptions | Format-Table -AutoSize twitchname, twittername, discordname
 ' '
 ' '

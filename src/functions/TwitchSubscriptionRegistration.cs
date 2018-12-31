@@ -43,7 +43,7 @@ namespace Markekraus.TwitchStreamNotifications
             var currentSubDictionary = new Dictionary<string,TwitchSubscription>();
             foreach(var subscription in currentSubscriptions)
             {
-                log.LogInformation($"Add TwitchName {subscription.Subscription.TwitchName} TwitterName {subscription.Subscription.TwitterName}");
+                log.LogInformation($"Add TwitchName {subscription.Subscription.TwitchName} TwitterName {subscription.Subscription.TwitterName} DiscordName {subscription.Subscription.DiscordName}");
                 currentSubDictionary.Add(subscription.Subscription.TwitchName, subscription.Subscription);
             }
 
@@ -51,7 +51,7 @@ namespace Markekraus.TwitchStreamNotifications
             var requestedSubDictionary = new Dictionary<string,TwitchSubscription>();
             foreach(var subscription in TwitchSubscriptions)
             {
-                log.LogInformation($"Add TwitchName {subscription.TwitchName} TwitterName {subscription.TwitterName}");
+                log.LogInformation($"Add TwitchName {subscription.TwitchName} TwitterName {subscription.TwitterName} DiscordName {subscription.DiscordName}");
                 requestedSubDictionary.Add(subscription.TwitchName, subscription);
             }
 

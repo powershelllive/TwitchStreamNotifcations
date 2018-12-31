@@ -51,7 +51,7 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(requestUri)
             };
-            message.Headers.TryAddWithoutValidation("Accept","application/json");
+            message.Headers.TryAddWithoutValidation("Accept",Utility.ApplicationJsonContentType);
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
             LogHttpResponse(response, "GetOAuthResponse", Log);
 
@@ -190,7 +190,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             var message = new HttpRequestMessage()
             {
-                Content = new StringContent(requestBody, Encoding.UTF8, "application/json"),
+                Content = new StringContent(requestBody, Encoding.UTF8, Utility.ApplicationJsonContentType),
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(TwitchWebhooksHubEndpointUri)
             };

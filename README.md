@@ -9,8 +9,9 @@ This is an Azure Functions project which allows for notifications to services su
 Subscribed Twitch webhooks will submit to the `TwitchWebhookIngestion` function.
 The `TwitchWebhookIngestion` is responsible to validating the webhook payload and then queues it in the `TwitchStreamActivity` queue.
 The `TwitchStreamEventHandler` is triggered by the `TwitchStreamActivity` and is responsible for directing the event to notification handler queues.
-For now, the `TwitchStreamEventHandler` only queues the event to the `TwitterNotifications` queue.
+For now, the `TwitchStreamEventHandler` only queues the event to the `TwitterNotifications` and `DiscordNotifications` queues.
 The `TwitterEventHandler` function is triggered by the `TwitterNotifications` and will create a tweet stating a channel has gone live.
+The `DiscordEventHandler` function is triggered by the `DiscordNotifications` and will create a discord message stating a channel has gone live.
 
 ### Subscription Management
 
@@ -43,10 +44,10 @@ Valid webhook payloads are then enqueued in the `TwitchStreamEventHandler queue.
 #### TwitchStreamEventHandler
 
 * Trigger: `TwitchStreamActivity` queue
-* Output: `TwitterNotifications` queue
+* Output: `TwitterNotifications` queue, `DiscordNotifications` queue
 
 This function is responsible for routing Twitch Stream events to various event handlers.
-Currently, the only event handler is `TwitterEventHandler`.
+Currently, the only event handlers are `TwitterEventHandler` and `DiscordEventHandler`.
 
 #### TwitterEventHandler
 
@@ -54,6 +55,13 @@ Currently, the only event handler is `TwitterEventHandler`.
 
 This function is an Event handler for Twitter.
 Currently, the only action it takes is to create new tweets when a Twitch Stream has gone live.
+
+#### DiscordEventHandler
+
+* Trigger: `DiscordNotifications` queue
+
+This function is an Event handler for Discord.
+Currently, the only action it takes is to create new Discord Messages when a Twitch Stream has gone live.
 
 ### Subscription Management Functions
 
@@ -99,3 +107,6 @@ Subscriptions from the `TwitchUnsubscribeQueue` will be sent to the Twitch API t
 * `TwitchClientSecret` - Twitch APP Client Secret used for authenticating to Twitch API
 * `TwitchClientRedirectUri` - Twitch APP ClientRedirect Uri used for authenticating to Twitch API
 * `TwitchWebhookBaseUri` - The base URI used for Twitch webhook callbacks. `https://{AzureFuncionsWebAppName}.azurewebsites.net/api/TwitchWebhookIngestion`
+* `DiscordWebhookUri` - The URI for the Discord webhook
+* `DiscordMessageTemplate` - Message template for Discord messages.
+* `DiscordNotifications` - Queue name for Discord Events.

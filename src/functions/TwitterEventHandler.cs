@@ -10,7 +10,6 @@ namespace Markekraus.TwitchStreamNotifications
     // Borrowing from https://markheath.net/post/randomly-scheduled-tweets-azure-functions
     public static class TwitterEventHandler
     {
-        private const string DISABLE_NOTIFICATIONS = "DISABLE_NOTIFICATIONS";
         private readonly static string ConsumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
         private readonly static string ConsumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
         private readonly static string AccessToken = Environment.GetEnvironmentVariable("TwitterAccessToken");
@@ -52,7 +51,7 @@ namespace Markekraus.TwitchStreamNotifications
                 log.LogWarning($"Tweet too long {myTweet.Length}");
             }
 
-            if(Environment.GetEnvironmentVariable(DISABLE_NOTIFICATIONS).ToLower() == "true") {
+            if(Environment.GetEnvironmentVariable(Utility.DISABLE_NOTIFICATIONS).ToLower() == "true") {
                 log.LogInformation("Notifications are disabled. exiting");
                 return;
             }

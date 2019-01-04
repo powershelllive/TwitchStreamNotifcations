@@ -28,7 +28,7 @@ $Hash = $(-join($Hash |ForEach-Object ToString X2)).ToLower()
 $StreamName = 'markekraus'
 
 $Params = @{
-    Uri = "http://localhost:7071/api/TwitchWebhookIngestion/{0}" -f $StreamName
+    Uri = "http://localhost:7071/api/TwitchWebhookIngestion/{0}/{0}" -f $StreamName
     Method = 'Post'
     Body = $Body
     Headers = @{

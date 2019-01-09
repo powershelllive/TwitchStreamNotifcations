@@ -1,0 +1,262 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name to give the App Service site. Must be globally unique"
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The azure location in which the resources will be deployed. If not supplied, the location of the rearouse group will be used."
+      }
+    },
+    "vaultResourceGroup":{
+      "type": "string"
+    },
+    "vaultName":{
+      "type": "string"
+    }
+  },
+  "variables": {
+    "functionName": "[parameters('functionName')]",
+    "vaultResourceGroup": "[parameters('vaultResourceGroup')]",
+    "vaultName": "[parameters('vaultName')]",
+    "storageNamePart": "[if(greater(length(variables('functionName')),10),substring(variables('functionName'),0,10),variables('functionName'))]",
+    "storageName": "[concat(toLower(variables('storageNamePart')),uniqueString(resourceGroup().id))]",
+    "location": "[if(empty(parameters('location')),resourceGroup().location,parameters('location'))]",
+    "siteName": "[toLower(variables('functionName'))]",
+    "hostnameBinding": "[concat(variables('siteName'),'/',variables('siteName'),'.azurewebsites.net')]",
+    "hiddenLinkTagName": "[concat('hidden-link:/subscriptions/',subscription().id,'/resourceGroups/',resourceGroup().name,'/providers/microsoft.insights/components/',variables('functionName'))]",
+    "servicePlanName": "[concat(variables('functionName'),'ServicePlan')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01",
+      "type": "microsoft.insights/components",
+      "kind": "web",
+      "name": "[variables('functionName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "applicationType": "web",
+        "[variables('hiddenLinkTagName')]": "Resource"
+      },
+      "scale": null,
+      "properties": {
+        "Application_Type": "web",
+        "Flow_Type": "Redfield",
+        "Request_Source": "AppServiceEnablementCreate",
+        "HockeyAppId": null,
+        "SamplingPercentage": null
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic",
+        "size": "Y1",
+        "family": "Y",
+        "capacity": 0
+      },
+      "kind": "functionapp",
+      "name": "[variables('servicePlanName')]",
+      "apiVersion": "2016-09-01",
+      "location": "[variables('location')]",
+      "scale": null,
+      "properties": {
+        "name": "[variables('servicePlanName')]",
+        "workerTierName": null,
+        "adminSiteName": null,
+        "hostingEnvironmentProfile": null,
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "name": "[variables('functionName')]",
+      "apiVersion": "2016-08-01",
+      "location": "[variables('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "enabled": true,
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "8.11.1"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[variables('storageName')]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(concat('microsoft.insights/components/', variables('functionName'))).InstrumentationKey]"
+            },
+            {
+              "name": "DISABLE_NOTIFICATIONS",
+              "value": "true"
+            },
+            {
+              "name": "DiscordMessageTemplate",
+              "value": "{0} {1} is streaming live now!"
+            },
+            {
+              "name": "DiscordNotifications",
+              "value": "discordnotifications"
+            },
+            {
+              "name": "TwitchNotificationsTable",
+              "value": "twitchnotifications"
+            },
+            {
+              "name": "TwitchStreamActivity",
+              "value": "twitchstreamactivity"
+            },
+            {
+              "name": "TwitchSubscribeQueue",
+              "value": "twitchsubscribe"
+            },
+            {
+              "name": "TwitchUnsubscribeQueue",
+              "value": "twitchunsubscribe"
+            },
+            {
+              "name": "TwitterNotifications",
+              "value": "twitternotifications"
+            },
+            {
+              "name": "TwitterTweetTemplate",
+              "value": "{0} {1} is streaming live as of {2}! #PowerShellLive"
+            },
+            {
+              "name": "TwitchWebhookBaseUri",
+              "value": "https://testtwitchstreamnotifications.azurewebsites.net/TwitchWebhookIngestion"
+            },
+            {
+              "name": "DiscordWebhookUri",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'DiscordWebhookUri'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitchClientId",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitchClientId'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitchClientRedirectUri",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitchClientRedirectUri'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitchClientSecret",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitchClientSecret'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitchStreamStorage",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitchStreamStorage'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitchSubscriptionsHashSecret",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitchSubscriptionsHashSecret'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitterAccessToken",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitterAccessToken'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitterAccessTokenSecret",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitterAccessTokenSecret'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitterConsumerKey",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitterConsumerKey'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+              "name": "TwitterConsumerSecret",
+              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitterConsumerSecret'),'2015-06-01').secretUriWithVersion,')')]"
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "name": "[variables('storageName')]",
+      "apiVersion": "2018-07-01",
+      "location": "[variables('location')]",
+      "tags": {},
+      "scale": null,
+      "properties": {
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "virtualNetworkRules": [],
+          "ipRules": [],
+          "defaultAction": "Allow"
+        },
+        "supportsHttpsTrafficOnly": false,
+        "encryption": {
+          "services": {
+            "file": {
+              "enabled": true
+            },
+            "blob": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "name": "[variables('hostnameBinding')]",
+      "apiVersion": "2016-08-01",
+      "location": "[variables('location')]",
+      "scale": null,
+      "properties": {
+        "siteName": "[variables('siteName')]",
+        "domainId": null,
+        "hostNameType": "Verified"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('functionName'))]"
+      ]
+    }
+  ]
+}

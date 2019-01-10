@@ -1,0 +1,12 @@
+{
+  "queues": [
+    "discordnotifications",
+    "twitchstreamactivity",
+    "twitchsubscribe",
+    "twitchunsubscribe",
+    "twitternotifications"
+  ],
+  "tables": [
+    "twitchnotifications"
+  ]
+}

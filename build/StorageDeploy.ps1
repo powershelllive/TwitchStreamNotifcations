@@ -8,12 +8,12 @@ param (
     $ConfigFile = (Resolve-Path "storage.json").Path
 )
 end {
-    $AzOutput
+    $AzureOutput
 
     'Processing AzureOutput'
     $AzOutput = $AzureOutput | ConvertFrom-Json -ErrorAction 'Stop'
-    $StorageAccount = $AzureOutput.StorageAccount.Value
-    $ResourceGroup = $AzureOutput.ResourceGroup.Value
+    $StorageAccount = $AzOutput.StorageAccount.value
+    $ResourceGroup = $AzOutput.ResourceGroup.value
 
     'Processing {0}' -f $ConfigFile
     $Config = Get-Content -raw -Path $ConfigFile | ConvertFrom-Json -ErrorAction Stop

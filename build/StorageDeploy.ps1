@@ -2,16 +2,20 @@
 param (
     [Parameter()]
     [string]
-    $StorageAccount = $env:StorageAccount,
+    $AzureOutput = $env:AzureOutput,
 
     [Parameter()]
-    [string]
-    $ResourceGroup = $env:ResourceGroup,
-
-    [Parameter()]
-    $ConfigFile = (Resolve-Path "$PSScriptRoot/../config/storage.json").Path 
+    $ConfigFile = (Resolve-Path "storage.json").Path
 )
 end {
+    $AzOutput
+
+    'Processing AzureOutput'
+    $AzOutput = $AzureOutput | ConvertFrom-Json -ErrorAction 'Stop'
+    $StorageAccount = $AzureOutput.StorageAccount
+    $ResourceGroup = $AzureOutput.ResourceGroup
+
+    'Processing {0}' -f $ConfigFile
     $Config = Get-Content -raw -Path $ConfigFile | ConvertFrom-Json -ErrorAction Stop
     $Account = Get-AzureRmStorageAccount -Name $StorageAccount -ResourceGroupName $ResourceGroup
     $Context = $Account.Context

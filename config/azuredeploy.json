@@ -258,5 +258,15 @@
         "[resourceId('Microsoft.Web/sites', variables('functionName'))]"
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "StorageAccount": {
+      "type": "string",
+      "value": "[variables('storageName')]"
+    },
+    "ResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    }
+  }
 }

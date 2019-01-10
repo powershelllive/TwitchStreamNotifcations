@@ -12,8 +12,8 @@ end {
 
     'Processing AzureOutput'
     $AzOutput = $AzureOutput | ConvertFrom-Json -ErrorAction 'Stop'
-    $StorageAccount = $AzureOutput.StorageAccount
-    $ResourceGroup = $AzureOutput.ResourceGroup
+    $StorageAccount = $AzureOutput.StorageAccount.Value
+    $ResourceGroup = $AzureOutput.ResourceGroup.Value
 
     'Processing {0}' -f $ConfigFile
     $Config = Get-Content -raw -Path $ConfigFile | ConvertFrom-Json -ErrorAction Stop

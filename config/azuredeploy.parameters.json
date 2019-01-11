@@ -3,16 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "functionName": {
-      "value": "TestTwitchStreamNotifications"
+      "value": "TwitchStreamNotifications"
     },
     "location": {
       "value": "West US 2"
     },
     "vaultResourceGroup": {
-      "value": "TestTwitchStreamNotificationsKV"
+      "value": "TwitchStreamNotifyKV"
     },
     "vaultName": {
-      "value": "TestTwitchStreamNotifiKV"
+      "value": "TwitchStreamNotifyKV"
     }
   }
 }

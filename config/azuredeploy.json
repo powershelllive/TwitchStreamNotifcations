@@ -180,7 +180,7 @@
             },
             {
               "name": "TwitchStreamStorage",
-              "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitchStreamStorage'),'2015-06-01').secretUriWithVersion,')')]"
+              "value": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
             },
             {
               "name": "TwitchSubscriptionsHashSecret",

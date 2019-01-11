@@ -160,7 +160,7 @@
             },
             {
               "name": "TwitchWebhookBaseUri",
-              "value": "https://testtwitchstreamnotifications.azurewebsites.net/TwitchWebhookIngestion"
+              "value": "https://twitchstreamnotifications.azurewebsites.net/TwitchWebhookIngestion"
             },
             {
               "name": "DiscordWebhookUri",

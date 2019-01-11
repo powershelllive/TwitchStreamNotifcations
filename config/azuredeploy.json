@@ -124,7 +124,7 @@
             },
             {
               "name": "DISABLE_NOTIFICATIONS",
-              "value": "true"
+              "value": "false"
             },
             {
               "name": "DiscordMessageTemplate",

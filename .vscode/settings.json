@@ -1,11 +1,46 @@
 {
-  "azureFunctions.projectRuntime": "~2",
-  "azureFunctions.projectLanguage": "C#",
-  "azureFunctions.templateFilter": "Verified",
-  "azureFunctions.deploySubpath": "bin/Release/netcoreapp2.1/publish",
-  "azureFunctions.preDeployTask": "publish",
-"debug.internalConsoleOptions": "neverOpen",
-"cSpell.words": [
-    "HMACSHA"
-]
+    "azureFunctions.projectRuntime": "~2",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.templateFilter": "Verified",
+    "azureFunctions.deploySubpath": "bin/Release/netcoreapp2.1/publish",
+    "azureFunctions.preDeployTask": "publish",
+    "debug.internalConsoleOptions": "neverOpen",
+    "cSpell.words": [
+      "APPINSIGHTS",
+      "Acls",
+      "CONTENTAZUREFILECONNECTIONSTRING",
+      "CONTENTSHARE",
+      "Enablement",
+      "HMACSHA",
+      "INSTRUMENTATIONKEY",
+      "Notifi",
+      "Redfield",
+      "azurewebsites",
+      "discordnotifications",
+      "functionapp",
+      "serverfarms",
+      "twitchnotifications",
+      "twitchstreamactivity",
+      "twitchsubscribe",
+      "twitchunsubscribe",
+      "twitternotifications"
+    ],
+    "[powershell]": {
+      "editor.tabSize": 4,
+      "editor.insertSpaces": true,
+      "editor.detectIndentation": false,
+      "editor.trimAutoWhitespace": true
+  },
+    "[json]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.trimAutoWhitespace": true
+    },
+    "[jsonc]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.trimAutoWhitespace": true
+    }
 }

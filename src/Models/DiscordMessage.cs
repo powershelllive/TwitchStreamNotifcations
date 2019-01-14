@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace TwitchLib.Webhook.Models
+namespace Markekraus.TwitchStreamNotifications.Models
 {
     public class DiscordMessage
     {

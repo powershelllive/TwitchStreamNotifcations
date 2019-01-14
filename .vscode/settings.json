@@ -16,13 +16,17 @@
       "Notifi",
       "Redfield",
       "azurewebsites",
+      "discordeventnotification",
       "discordnotifications",
       "functionapp",
       "serverfarms",
+      "twitchchanneleventlookup",
+      "twitchchanneleventprocess",
       "twitchnotifications",
       "twitchstreamactivity",
       "twitchsubscribe",
       "twitchunsubscribe",
+      "twittereventnotification",
       "twitternotifications"
     ],
     "[powershell]": {

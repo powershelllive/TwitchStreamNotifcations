@@ -26,6 +26,7 @@ namespace Markekraus.TwitchStreamNotifications
         private const string TwitchStreamsEndpointUri = "https://api.twitch.tv/helix/streams";
         private const string TwitchWebhooksHubEndpointUri = "https://api.twitch.tv/helix/webhooks/hub";
         private const string TwitchWebhooksSubscriptionsEndpointUri = "https://api.twitch.tv/helix/webhooks/subscriptions";
+        private const string TwitchChannelEventUriTemplate = "https://api.twitch.tv/v5/channels/{0}/events";
         private const string ClientIdHeaderName = "Client-ID";
 
         private enum TwitchSubscriptionMode
@@ -210,6 +211,48 @@ namespace Markekraus.TwitchStreamNotifications
             Log.LogInformation($"Success: {Response.IsSuccessStatusCode}");
             Log.LogInformation($"StatusCode: {Response.StatusCode}");
             Log.LogInformation($"ReasonPhrase: {Response.ReasonPhrase}");
+        }
+
+        public static async Task<TwitchChannelEventResponse> GetTwitchSubscriptionEvents (TwitchSubscription Subscription, ILogger Log)
+        {
+            Log.LogInformation("GetTwitchSubscriptionEvents Begin");
+            Log.LogInformation($"GetTwitchSubscriptionEvents TwitchName: {Subscription.TwitchName}");
+            Log.LogInformation($"GetTwitchSubscriptionEvents TwitterName: {Subscription.TwitterName}");
+            Log.LogInformation($"GetTwitchSubscriptionEvents DiscordName: {Subscription.DiscordName}");
+
+            var userId = await GetTwitchStreamUserId(Subscription.TwitchName, Log);
+            Log.LogInformation($"GetTwitchSubscriptionEvents UserID: {userId}");
+
+             var requestUri = string.Format(TwitchChannelEventUriTemplate, userId);
+            Log.LogInformation($"GetTwitchSubscriptionEvents RequestUri: {requestUri}");
+
+            var message = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUri)
+            };
+            message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
+
+            var httpResponse = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
+
+            LogHttpResponse(httpResponse, "GetTwitchSubscriptionEvents", Log);
+
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                Log.LogInformation("GetTwitchSubscriptionEvents End");
+                return null;
+            }
+            else
+            {
+                var responseBody = await httpResponse.Content.ReadAsStringAsync();
+                Log.LogInformation("GetTwitchSubscriptionEvents ResponseBody:");
+                Log.LogInformation(responseBody);
+
+                var response = JsonConvert.DeserializeObject<TwitchChannelEventResponse>(responseBody);
+
+                Log.LogInformation("GetTwitchStreamUserId End");
+                return response;
+            }
         }
     }
 }

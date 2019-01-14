@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using Markekraus.TwitchStreamNotifications.Models;
+using System.Collections.Generic;
 
 namespace Markekraus.TwitchStreamNotifications
 {
@@ -16,6 +18,13 @@ namespace Markekraus.TwitchStreamNotifications
         public const string NameNullString = "--";
         public const string DISABLE_NOTIFICATIONS = "DISABLE_NOTIFICATIONS";
         public const string ApplicationJsonContentType = "application/json";
+
+        public readonly static Dictionary<TwitchScheduledChannelEventType, string> TypeStringLookup = new Dictionary<TwitchScheduledChannelEventType, string>(){
+            {TwitchScheduledChannelEventType.Unknown, "unknown"},
+            {TwitchScheduledChannelEventType.Hour, "an hour"},
+            {TwitchScheduledChannelEventType.Day, "a day"},
+            {TwitchScheduledChannelEventType.Week, "a week"}
+        };
 
         public static async Task<byte[]> ComputeRequestBodySha256HashAsync(
             HttpRequest request,

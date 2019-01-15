@@ -10,12 +10,13 @@ namespace Markekraus.TwitchStreamNotifications
     public static class TwitchChannelEventProcess
     {
         [FunctionName("TwitchChannelEventProcess")]
-        public static async Task Run([QueueTrigger("%TwitchChannelEventProcessQueue%", Connection = "TwitchStreamStorage")]TwitchChannelEventItem ChannelEventItem,
-        [Queue("%DiscordEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> DiscordQueue,
-        [Queue("%TwitterEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> TwitterQueue,
-        ILogger log)
+        public static async Task Run(
+            [QueueTrigger("%TwitchChannelEventProcessQueue%", Connection = "TwitchStreamStorage")]TwitchChannelEventItem ChannelEventItem,
+            [Queue("%DiscordEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> DiscordQueue,
+            [Queue("%TwitterEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> TwitterQueue,
+            ILogger log)
         {
-            log.LogInformation($"TwitchChannelEventProcess function processed: {ChannelEventItem.Event.Id}");
+            log.LogInformation($"TwitchChannelEventProcess function processed: TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id}");
 
             var channelEvent = ChannelEventItem.Event;
 
@@ -39,17 +40,17 @@ namespace Markekraus.TwitchStreamNotifications
 
             if(channelEvent.StartTime >= hourStart && channelEvent.StartTime <= hourEnd)
             {
-                log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in an hour");
+                log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in an hour {channelEvent.StartTime}");
                 scheduledEvent.Type = TwitchScheduledChannelEventType.Hour;
             }
             else if (channelEvent.StartTime >= dayStart && channelEvent.StartTime <= dayEnd)
             {
-                log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in a day");
+                log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in a day {channelEvent.StartTime}");
                 scheduledEvent.Type = TwitchScheduledChannelEventType.Day;
             }
             else if (channelEvent.StartTime >= weekStart && channelEvent.StartTime <= weekEnd)
             {
-                log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in a week");
+                log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in a week {channelEvent.StartTime}");
                 scheduledEvent.Type = TwitchScheduledChannelEventType.Week;
             }
             else

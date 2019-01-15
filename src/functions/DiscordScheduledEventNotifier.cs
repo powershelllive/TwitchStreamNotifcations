@@ -40,7 +40,7 @@ namespace Markekraus.TwitchStreamNotifications
             }
 
             string eventUri = $"https://www.twitch.tv/events/{channelEvent.Id}";
-            log.LogInformation($"Event Uri: {eventUri}");
+            log.LogInformation($"DiscordScheduledEventNotifier Event Uri: {eventUri}");
 
             var myDiscordMessage = new DiscordMessage(){
                 Content = string.Format(

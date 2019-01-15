@@ -40,7 +40,7 @@ namespace Markekraus.TwitchStreamNotifications
             }
 
             string eventUri = $"https://www.twitch.tv/events/{channelEvent.Id}";
-            log.LogInformation($"Event Uri: {eventUri}");
+            log.LogInformation($"TwitterScheduledEventNotifier Event Uri: {eventUri}");
 
             string myTweet = string.Format(
                 TwitterTweetTemplate,

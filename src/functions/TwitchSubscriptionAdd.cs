@@ -15,16 +15,16 @@ namespace Markekraus.TwitchStreamNotifications
         {
             log.LogInformation("TwitchSubscriptionAdd Begin");
 
-            log.LogInformation($"Process TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
+            log.LogInformation($"TwitchSubscriptionAdd Process TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
 
-            log.LogInformation($"Subscribing TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
+            log.LogInformation($"TwitchSubscriptionAdd Subscribing TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
             try
             {
                 await TwitchClient.SubscribeTwitchStreamWebhook(Subscription, log);
-                log.LogInformation($"Subscribed TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
+                log.LogInformation($"TwitchSubscriptionAdd Subscribed TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
             } catch (System.Exception e)
             {
-                log.LogError(e, "exception subscribing");
+                log.LogError(e, "TwitchSubscriptionAdd exception subscribing");
             }
 
             log.LogInformation("TwitchSubscriptionAdd End");

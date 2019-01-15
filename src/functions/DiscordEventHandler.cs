@@ -20,7 +20,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             if (StreamEvent.Type != "live")
             { 
-                log.LogInformation($"Processing event skipped. type: {StreamEvent.Type}");
+                log.LogInformation($"DiscordEventHandler Processing event skipped. type: {StreamEvent.Type}");
                 return;
             }
 
@@ -28,16 +28,16 @@ namespace Markekraus.TwitchStreamNotifications
             if (string.IsNullOrWhiteSpace(StreamEvent.Subscription.DiscordName))
             {
                 username = StreamEvent.UserName;
-                log.LogInformation($"Stream username {username} will be used");
+                log.LogInformation($"DiscordEventHandler Stream username {username} will be used");
             }
             else
             {
                 username = $"<@{StreamEvent.Subscription.DiscordName}>";
-                log.LogInformation($"Discord username {username} will be used");
+                log.LogInformation($"DiscordEventHandler Discord username {username} will be used");
             }
 
             string streamUri = $"https://twitch.tv/{StreamEvent.UserName}";
-            log.LogInformation($"Stream Uri: {streamUri}");
+            log.LogInformation($"DiscordEventHandler Stream Uri: {streamUri}");
 
             var myDiscordMessage = new DiscordMessage()
             {

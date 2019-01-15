@@ -131,6 +131,14 @@
               "value": "{0} {1} is streaming live now!"
             },
             {
+              "name": "DiscordScheduledEventMessageTemplate",
+              "value": "{0} {1} has an upcoming streaming event in {2} at {3} titled '{4}'"
+            },
+            {
+              "name": "TwitterScheduledEventTweetTemplate",
+              "value": "{0} {1} has an upcoming streaming event in {2} at {3} titled '{4}'"
+            },
+            {
               "name": "DiscordNotifications",
               "value": "discordnotifications"
             },
@@ -151,8 +159,24 @@
               "value": "twitchunsubscribe"
             },
             {
+              "name": "TwitchChannelEventLookupQueue",
+              "value": "twitchchanneleventlookup"
+            },
+            {
+              "name": "TwitchChannelEventProcessQueue",
+              "value": "twitchchanneleventprocess"
+            },
+            {
               "name": "TwitterNotifications",
               "value": "twitternotifications"
+            },
+            {
+              "name": "DiscordEventNotificationsQueue",
+              "value": "discordeventnotification"
+            },
+            {
+              "name": "TwitterEventNotificationsQueue",
+              "value": "twittereventnotification"
             },
             {
               "name": "TwitterTweetTemplate",

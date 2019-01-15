@@ -256,6 +256,37 @@ function Unregister-TwitchStreamWebhookSubscription {
     }
 }
 
+function Get-TwitchEvents {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        $TwitchApp,
+
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $StreamName,
+
+        [Parameter(DontShow)]
+        [ValidateNotNullOrEmpty()]
+        $BaseUri = 'https://api.twitch.tv/v5'
+    )
+
+    process {
+        $UserId = (Get-TwitchUser -StreamName $StreamName -TwitchApp $TwitchApp).id
+        $Params = @{
+            Uri = '{0}/channels/{1}/events' -f $BaseUri, $UserId
+            Method = 'GET'
+            Headers = @{
+                'Client-ID' = $TwitchApp.ClientId
+            }
+            ContentType = 'application/json'
+        }
+        (Invoke-RestMethod @Params).events
+    }
+}
+
 $AppCreds = Get-Credential
 $HubSecret = Read-Host -AsSecureString
 $HubSecret = ([pscredential]::new('foo', $HubSecret)).GetNetworkCredential().Password

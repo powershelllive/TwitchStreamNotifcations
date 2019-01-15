@@ -4,7 +4,11 @@
     "twitchstreamactivity",
     "twitchsubscribe",
     "twitchunsubscribe",
-    "twitternotifications"
+    "twitternotifications",
+    "twitchchanneleventlookup",
+    "twitchchanneleventprocess",
+    "discordeventnotification",
+    "twittereventnotification"
   ],
   "tables": [
     "twitchnotifications"

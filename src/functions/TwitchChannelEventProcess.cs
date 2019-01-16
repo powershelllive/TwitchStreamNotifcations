@@ -16,17 +16,18 @@ namespace Markekraus.TwitchStreamNotifications
             [Queue("%TwitterEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> TwitterQueue,
             ILogger log)
         {
-            log.LogInformation($"TwitchChannelEventProcess function processed: TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id}");
+            log.LogInformation($"TwitchChannelEventProcess function processed: TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} StartTime {ChannelEventItem.Event.StartTime}");
 
             var channelEvent = ChannelEventItem.Event;
 
             var now = DateTime.UtcNow;
-            var hourStart = new DateTime(now.Year, now.Month, now.Day, now.Hour+1, 0, 0, DateTimeKind.Utc);
-            var hourEnd = new DateTime(now.Year, now.Month, now.Day, now.Hour+1, 59, 59, DateTimeKind.Utc);
-            var weekStart = new DateTime(now.Year, now.Month, now.Day+7, now.Hour, 0, 0, DateTimeKind.Utc);
-            var weekEnd = new DateTime(now.Year, now.Month, now.Day+7, now.Hour, 59, 59, DateTimeKind.Utc);
-            var dayStart = new DateTime(now.Year, now.Month, now.Day+1, now.Hour, 0, 0, DateTimeKind.Utc);
-            var dayEnd = new DateTime(now.Year, now.Month, now.Day+1, now.Hour, 59, 59, DateTimeKind.Utc);
+            var nowHour = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0, DateTimeKind.Utc);
+            var hourStart = nowHour.AddHours(1);
+            var hourEnd = hourStart.AddHours(1).AddSeconds(-1);
+            var weekStart = nowHour.AddDays(7);
+            var weekEnd = weekStart.AddHours(1).AddSeconds(-1);
+            var dayStart = nowHour.AddDays(1);
+            var dayEnd = dayStart.AddHours(1).AddSeconds(-1);
 
             log.LogInformation($"TwitchChannelEventProcess Now {now}");
             log.LogInformation($"TwitchChannelEventProcess HourStart {hourStart}");

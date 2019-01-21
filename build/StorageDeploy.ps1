@@ -84,7 +84,7 @@ end {
         }
     }
 
-    $ContainerList = Get-AzureRmStorageContainer -ResourceGroupName $ResourceGroup -StorageAccountName $StorageAccount | ForEach-Object -MemberName Name
+    $ContainerList = Get-AzureStorageContainer -Context $Context | ForEach-Object -MemberName Name
     $RemoveContainers = [System.Linq.Enumerable]::Except([string[]]$ContainerList, [string[]]$Config.containers)
     foreach($container in $RemoveContainers) {
         try {

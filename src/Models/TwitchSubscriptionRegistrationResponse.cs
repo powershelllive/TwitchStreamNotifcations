@@ -17,5 +17,8 @@ namespace Markekraus.TwitchStreamNotifications.Models
 
         [JsonProperty("RemoveSubscriptions")]
         public IList<TwitchSubscription> RemoveSubscriptions { get; set; }
+
+        [JsonProperty("RenewSubscriptions")]
+        public IList<TwitchSubscription> RenewSubscriptions { get; set; }
     }
 }

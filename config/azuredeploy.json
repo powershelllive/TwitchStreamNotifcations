@@ -225,6 +225,10 @@
             {
               "name": "TwitterConsumerSecret",
               "value": "[concat('@Microsoft.KeyVault(SecretUri=',reference(resourceId(variables('vaultResourceGroup'),'Microsoft.KeyVault/vaults/secrets',variables('vaultName'),'TwitterConsumerSecret'),'2015-06-01').secretUriWithVersion,')')]"
+            },
+            {
+                "name": "TwitchSubscriptionBlob",
+                "value": "twitchsubscriptions/Subscriptions.json"
             }
           ]
         }

@@ -62,3 +62,8 @@ $Result.AddSubscriptions | Format-Table -AutoSize twitchname, twittername, disco
 $Result.RemoveSubscriptions | Format-Table -AutoSize twitchname, twittername, discordname
 ' '
 ' '
+'-----------------'
+'Queued for Renewal'
+$Result.RenewSubscriptions | Format-Table -AutoSize twitchname, twittername, discordname
+' '
+' '

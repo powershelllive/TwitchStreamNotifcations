@@ -12,5 +12,8 @@
   ],
   "tables": [
     "twitchnotifications"
+  ],
+  "containers": [
+    "twitchsubscriptions"
   ]
 }

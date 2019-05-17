@@ -1,0 +1,71 @@
+pool:
+  name: Hosted VS2017
+
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - src/*
+    - config/*
+    exclude:
+    - config/Subscriptions.json
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+    workingDirectory: src
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    projects: '**/*.csproj'
+    arguments: '--configuration Release'
+    workingDirectory: src
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+    workingDirectory: src
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop azuredeploy.json'
+  inputs:
+    PathtoPublish: config/azuredeploy.json
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop azuredeploy.parameters.json'
+  inputs:
+    PathtoPublish: config/azuredeploy.parameters.json
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop storage.json'
+  inputs:
+    PathtoPublish: config/storage.json
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop StorageDeploy.ps1'
+  inputs:
+    PathtoPublish: build/StorageDeploy.ps1
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop Subscriptions.json'
+  inputs:
+    PathtoPublish: config/Subscriptions.json
+  condition: succeededOrFailed()

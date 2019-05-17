@@ -1,0 +1,29 @@
+pool:
+  name: Hosted VS2017
+  demands: azureps
+
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - config/Subscriptions.json
+
+steps:
+- task: PowerShell@2
+  displayName: 'Invoke-TwitchSubscriptionRegistration'
+  inputs:
+    targetType: filePath
+    filePath: './scripts/Invoke-TwitchSubscriptionRegistration.ps1'
+  env:
+    FunctionCode: $(FunctionCode)
+
+- task: AzureFileCopy@2
+  displayName: 'Copy Subscriptions.json'
+  inputs:
+    SourcePath: config/Subscriptions.json
+    azureSubscription: 'Borrowed Sub'
+    Destination: AzureBlob
+    storage: twitchstreib5ymu5bwh4su
+    ContainerName: twitchsubscriptions

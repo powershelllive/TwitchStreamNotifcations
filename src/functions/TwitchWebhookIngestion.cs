@@ -9,6 +9,7 @@ using TwitchLib.Webhook.Models;
 using Newtonsoft.Json;
 using Markekraus.TwitchStreamNotifications.Models;
 using Stream = TwitchLib.Webhook.Models.Stream;
+using System.Text.RegularExpressions;
 
 namespace Markekraus.TwitchStreamNotifications
 {
@@ -124,8 +125,16 @@ namespace Markekraus.TwitchStreamNotifications
 
                 item.Subscription = subscription;
 
-                Log.LogInformation($"Queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}");
-                queue.Add(item);
+                var hasMatchingTitle = Regex.Match(item.Title, Utility.TwitchStreamRegexPattern, RegexOptions.IgnoreCase, Utility.RegexTimeout).Success;
+                if (hasMatchingTitle)
+                {
+                  Log.LogInformation($"Queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}");
+                  queue.Add(item);
+                }
+                else
+                {
+                  Log.LogInformation($"Skip queing notification for stream {item.UserName} type {item.Type} started at {item.StartedAt}. Does not have matchign title.");
+                }
             }
 
             Log.LogInformation("Processing complete");

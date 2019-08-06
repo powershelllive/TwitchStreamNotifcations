@@ -18,6 +18,8 @@ namespace Markekraus.TwitchStreamNotifications
         public const string NameNullString = "--";
         public const string DISABLE_NOTIFICATIONS = "DISABLE_NOTIFICATIONS";
         public const string ApplicationJsonContentType = "application/json";
+        public const string TwitchStreamRegexPattern = "PowerShell";
+        public readonly static TimeSpan RegexTimeout = new TimeSpan(0,0,5);
 
         public readonly static Dictionary<TwitchScheduledChannelEventType, string> TypeStringLookup = new Dictionary<TwitchScheduledChannelEventType, string>(){
             {TwitchScheduledChannelEventType.Unknown, "unknown"},

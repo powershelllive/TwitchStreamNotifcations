@@ -4,6 +4,7 @@ using Markekraus.TwitchStreamNotifications.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace Markekraus.TwitchStreamNotifications
 {
@@ -21,11 +22,19 @@ namespace Markekraus.TwitchStreamNotifications
 
             foreach (var channelEvent in response.Events)
             {
-                log.LogInformation($"TwitchChannelEventLookup Queing event {channelEvent.Id} for channel {Subscription.TwitchName}");
-                await EventProccessQueue.AddAsync(new TwitchChannelEventItem(){
-                    Event = channelEvent,
-                    Subscription = Subscription
-                });
+                var hasMatchingTitle = Regex.Match(channelEvent.Title, Utility.TwitchStreamRegexPattern, RegexOptions.IgnoreCase, Utility.RegexTimeout).Success;
+                if (hasMatchingTitle)
+                {
+                  log.LogInformation($"TwitchChannelEventLookup Queing event {channelEvent.Id} for channel {Subscription.TwitchName}. hasMatchingTitle {hasMatchingTitle}");
+                  await EventProccessQueue.AddAsync(new TwitchChannelEventItem(){
+                      Event = channelEvent,
+                      Subscription = Subscription
+                  });
+                }
+                else
+                {
+                  log.LogInformation($"TwitchChannelEventLookup Skip Queing event {channelEvent.Id} for channel {Subscription.TwitchName}. hasMatchingTitle {hasMatchingTitle}");
+                }
             }
 
             log.LogInformation("TwitchChannelEventLookup end");

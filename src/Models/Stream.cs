@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Markekraus.TwitchStreamNotifications.Models;
+using Markekraus.TwitchStreamNotifications;
+using Microsoft.Extensions.Logging;
 
 namespace TwitchLib.Webhook.Models
 {
     public class Stream
     {
+
+        private const string DefaultGame = "unknown game";
 
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -44,5 +49,31 @@ namespace TwitchLib.Webhook.Models
         [JsonProperty("subscription")]
         public TwitchSubscription Subscription { get; set; }
 
+        public async Task<string> GetGameName(ILogger Log)
+        {
+            string game;
+            if(string.IsNullOrWhiteSpace(this.GameId))
+            {
+                game = DefaultGame;
+            }
+            else
+            {
+                try
+                {
+                  game = (await TwitchClient.GetGame(this.GameId, Log)).Name;
+                }
+                catch (Exception e)
+                {
+                  Log.LogError($"Failed to get game. GameId {this.GameId}: {e.Message}: {e.StackTrace}");
+                  game = DefaultGame;
+                }
+                if(string.IsNullOrWhiteSpace(game))
+                {
+                  Log.LogError($"GetGame returned null. GameId {this.GameId}");
+                  game = DefaultGame;
+                }
+            }
+            return game;
+        }
     }
 }

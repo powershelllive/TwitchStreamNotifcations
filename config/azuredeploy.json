@@ -128,7 +128,7 @@
             },
             {
               "name": "DiscordMessageTemplate",
-              "value": "{0} {1} is streaming live now!"
+              "value": "{0} {1} is streaming {3} live now!"
             },
             {
               "name": "DiscordScheduledEventMessageTemplate",
@@ -180,7 +180,7 @@
             },
             {
               "name": "TwitterTweetTemplate",
-              "value": "{0} {1} is streaming live as of {2}! #PowerShellLive"
+              "value": "{0} {1} is streaming {3} live as of {2}! #PowerShellLive"
             },
             {
               "name": "TwitchWebhookBaseUri",

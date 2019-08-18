@@ -28,6 +28,7 @@ namespace Markekraus.TwitchStreamNotifications
         private const string TwitchWebhooksHubEndpointUri = "https://api.twitch.tv/helix/webhooks/hub";
         private const string TwitchWebhooksSubscriptionsEndpointUri = "https://api.twitch.tv/helix/webhooks/subscriptions";
         private const string TwitchChannelEventUriTemplate = "https://api.twitch.tv/v5/channels/{0}/events";
+        private const string TwitchGamesEndpointUri = "https://api.twitch.tv/helix/games";
         private const string ClientIdHeaderName = "Client-ID";
 
         private enum TwitchSubscriptionMode
@@ -336,6 +337,43 @@ namespace Markekraus.TwitchStreamNotifications
             }
 
             return response;
+        }
+
+        public static async Task<TwitchGame> GetGame(string GameId, ILogger Log)
+        {
+            Log.LogInformation("GetGame Begin");
+            Log.LogInformation($"GetGame GameId: {GameId}");
+
+            var requestUri = $"{TwitchGamesEndpointUri}?id={GameId}";
+            Log.LogInformation($"GetGame RequestUri: {requestUri}");
+
+            var message = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUri)
+            };
+            message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
+
+            var httpResponse = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
+
+            LogHttpResponse(httpResponse, "GetGame", Log);
+
+            if(!httpResponse.IsSuccessStatusCode)
+            {
+                Log.LogInformation("GetGame End");
+                return null;
+            }
+            else
+            {
+                var responseBody = await httpResponse.Content.ReadAsStringAsync();
+                Log.LogInformation("GetGame ResponseBody:");
+                Log.LogInformation(responseBody);
+
+                var response = JsonConvert.DeserializeObject<TwitchGamesData>(responseBody).Data.First();
+
+                Log.LogInformation("GetGame End");
+                return response;
+            }
         }
     }
 }

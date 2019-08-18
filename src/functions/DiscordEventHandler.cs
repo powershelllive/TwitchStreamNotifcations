@@ -36,12 +36,15 @@ namespace Markekraus.TwitchStreamNotifications
                 log.LogInformation($"DiscordEventHandler Discord username {username} will be used");
             }
 
+            var game = StreamEvent.GetGameName(log);
+            log.LogInformation($"DiscordEventHandler game {game} will be used");
+
             string streamUri = $"https://twitch.tv/{StreamEvent.UserName}";
             log.LogInformation($"DiscordEventHandler Stream Uri: {streamUri}");
 
             var myDiscordMessage = new DiscordMessage()
             {
-                Content = string.Format(DiscordMessageTemplate, streamUri, username, DateTime.UtcNow.ToString("u"))
+                Content = string.Format(DiscordMessageTemplate, streamUri, username, DateTime.UtcNow.ToString("u"), game)
             };
 
             await DiscordClient.SendDiscordMessageAsync(myDiscordMessage, log);

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,7 @@ namespace Markekraus.TwitchStreamNotifications
         private readonly static string TwitterTweetTemplate = Environment.GetEnvironmentVariable("TwitterTweetTemplate");
 
         [FunctionName("TwitterEventHandler")]
-        public static void Run([QueueTrigger("%TwitterNotifications%", Connection = "TwitchStreamStorage")]TwitchLib.Webhook.Models.Stream StreamEvent, ILogger log)
+        public static async Task Run([QueueTrigger("%TwitterNotifications%", Connection = "TwitchStreamStorage")]TwitchLib.Webhook.Models.Stream StreamEvent, ILogger log)
         {
             log.LogInformation($"TwitterEventHandler processing: {StreamEvent.UserName} type {StreamEvent.Type} started at {StreamEvent.StartedAt}");
 
@@ -33,10 +34,13 @@ namespace Markekraus.TwitchStreamNotifications
                 log.LogInformation($"TwitterEventHandler Twitter username {username} will be used");
             }
 
+            var game = await StreamEvent.GetGameName(log);
+            log.LogInformation($"TwitterEventHandler Twitter game {game} will be used");
+
             string streamUri = $"https://twitch.tv/{StreamEvent.UserName}";
             log.LogInformation($"TwitterEventHandler Stream Uri: {streamUri}");
 
-            string myTweet = string.Format(TwitterTweetTemplate, streamUri, username, DateTime.UtcNow.ToString("u"));
+            string myTweet = string.Format(TwitterTweetTemplate, streamUri, username, DateTime.UtcNow.ToString("u"), game);
             
             TwitterClient.PublishTweet(myTweet, log);
         }

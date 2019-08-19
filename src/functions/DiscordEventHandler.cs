@@ -36,7 +36,7 @@ namespace Markekraus.TwitchStreamNotifications
                 log.LogInformation($"DiscordEventHandler Discord username {username} will be used");
             }
 
-            var game = StreamEvent.GetGameName(log);
+            var game = await StreamEvent.GetGameName(log);
             log.LogInformation($"DiscordEventHandler game {game} will be used");
 
             string streamUri = $"https://twitch.tv/{StreamEvent.UserName}";

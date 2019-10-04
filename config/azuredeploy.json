@@ -128,11 +128,11 @@
             },
             {
               "name": "DiscordMessageTemplate",
-              "value": "{0} {1} is streaming {3} live now!"
+              "value": "{1} is streaming {3} live now: {0}"
             },
             {
               "name": "DiscordScheduledEventMessageTemplate",
-              "value": "{0} {1} has an upcoming streaming event in {2} at {3} titled '{4}'"
+              "value": "{1} has an upcoming streaming event in {2} at {3} titled '{4}' More info: {0}"
             },
             {
               "name": "TwitterScheduledEventTweetTemplate",

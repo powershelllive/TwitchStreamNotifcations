@@ -85,6 +85,7 @@ namespace Markekraus.TwitchStreamNotifications
                 RequestUri = new Uri(requestUri)
             };
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
+            message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
             
             var response = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
 

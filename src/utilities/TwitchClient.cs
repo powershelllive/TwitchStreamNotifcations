@@ -40,19 +40,15 @@ namespace Markekraus.TwitchStreamNotifications
         private static async Task<TwitchOAuthResponse> GetOAuthResponse (ILogger Log)
         {
             Log.LogInformation("GetOAuthResponse Begin");
-            var dict = new Dictionary<string, string>();
-            dict.Add("client_id", clientId);
-            dict.Add("client_secret", clientSecret);
-            dict.Add("grant_type", "client_credentials");
+            string query = $"client_id={ WebUtility.UrlEncode(clientId) }&client_secret={ WebUtility.UrlEncode(clientSecret) }&grant_type=client_credentials";
 
             var requestUri = TwitchOAuthBaseUri;
             Log.LogInformation($"RequestUri: {requestUri}");
 
             var message = new HttpRequestMessage()
             {
-                Content = new FormUrlEncodedContent(dict),
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(requestUri)
+                RequestUri = new UriBuilder(requestUri){Query = query}.Uri
             };
             message.Headers.TryAddWithoutValidation("Accept",Utility.ApplicationJsonContentType);
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
@@ -89,7 +85,8 @@ namespace Markekraus.TwitchStreamNotifications
                 RequestUri = new Uri(requestUri)
             };
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
-
+            message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
+            
             var response = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
 
             LogHttpResponse(response, "GetTwitchWebhookSubscriptions", Log);
@@ -114,11 +111,13 @@ namespace Markekraus.TwitchStreamNotifications
             var requestUri = $"{TwitchUsersEndpointUri}?login={WebUtility.UrlEncode(TwitchName)}";
             Log.LogInformation($"RequestUri: {requestUri}");
 
+            var authToken = await GetOAuthResponse(Log);
             var message = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(requestUri)
             };
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
             var response = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
@@ -186,12 +185,14 @@ namespace Markekraus.TwitchStreamNotifications
 
             var requestBody = JsonConvert.SerializeObject(hubSubscription);
 
+            var authToken = await GetOAuthResponse(Log);
             var message = new HttpRequestMessage()
             {
                 Content = new StringContent(requestBody, Encoding.UTF8, Utility.ApplicationJsonContentType),
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(TwitchWebhooksHubEndpointUri)
             };
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);

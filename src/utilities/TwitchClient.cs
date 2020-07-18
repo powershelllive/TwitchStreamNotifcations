@@ -40,15 +40,19 @@ namespace Markekraus.TwitchStreamNotifications
         private static async Task<TwitchOAuthResponse> GetOAuthResponse (ILogger Log)
         {
             Log.LogInformation("GetOAuthResponse Begin");
-            string query = $"client_id={ WebUtility.UrlEncode(clientId) }&client_secret={ WebUtility.UrlEncode(clientSecret) }&grant_type=client_credentials";
+            var dict = new Dictionary<string, string>();
+            dict.Add("client_id", clientId);
+            dict.Add("client_secret", clientSecret);
+            dict.Add("grant_type", "client_credentials");
 
             var requestUri = TwitchOAuthBaseUri;
             Log.LogInformation($"RequestUri: {requestUri}");
 
             var message = new HttpRequestMessage()
             {
+                Content = new FormUrlEncodedContent(dict),
                 Method = HttpMethod.Post,
-                RequestUri = new UriBuilder(requestUri){Query = query}.Uri
+                RequestUri = new Uri(requestUri)
             };
             message.Headers.TryAddWithoutValidation("Accept",Utility.ApplicationJsonContentType);
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);

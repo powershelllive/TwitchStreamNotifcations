@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "systemName": {
+            "value": "TwitchStreamNotifications2"
+        },
+        "storageAccountSku": {
+            "value": "Standard_LRS"
+        },
+        "runtime": {
+            "value": "dotnet"
+        },
+        "appSettings": {
+            "value": {
+              "DISABLE_NOTIFICATIONS": "false",
+              "DiscordMessageTemplate": "{1} is streaming {3} live now: {0}",
+              "DiscordScheduledEventMessageTemplate": "{1} has an upcoming streaming event in {2} at {3} titled '{4}' More info: {0}",
+              "TwitterScheduledEventTweetTemplate": "{0} {1} has an upcoming streaming event in {2} at {3} titled '{4}'",
+              "DiscordNotifications": "discordnotifications",
+              "TwitchNotificationsTable": "twitchnotifications",
+              "TwitchStreamActivity": "twitchstreamactivity",
+              "TwitchSubscribeQueue": "twitchsubscribe",
+              "TwitchUnsubscribeQueue": "twitchunsubscribe",
+              "TwitchChannelEventLookupQueue": "twitchchanneleventlookup",
+              "TwitchChannelEventProcessQueue": "twitchchanneleventprocess",
+              "TwitterNotifications": "twitternotifications",
+              "DiscordEventNotificationsQueue": "discordeventnotification",
+              "TwitterEventNotificationsQueue": "twittereventnotification",
+              "TwitterTweetTemplate": "{0} {1} is streaming {3} live as of {2}! #PowerShellLive",
+              "TwitchSubscriptionBlob": "twitchsubscriptions/Subscriptions.json",
+              "TwitchWebhookBaseUri": "https://twitchstreamnotifications2.azurewebsites.net/api/TwitchWebhookIngestion",
+              "TwitchStreamStorage": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotiflszinkv.vault.azure.net/secrets/TwitchStreamNotifications2-connectionstring)",
+              "DiscordWebhookUri": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/DiscordWebhookUri)",
+              "TwitchClientId": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitchClientId)",
+              "TwitchClientRedirectUri": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitchClientRedirectUri)",
+              "TwitchClientSecret": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitchClientSecret)",
+              "TwitchSubscriptionsHashSecret": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitchSubscriptionsHashSecret)",
+              "TwitterAccessToken": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitterAccessToken)",
+              "TwitterAccessTokenSecret": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitterAccessTokenSecret)",
+              "TwitterConsumerKey": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitterConsumerKey)",
+              "TwitterConsumerSecret": "@Microsoft.KeyVault(SecretUri=https://TwitchStreamNotifyKV2.vault.azure.net/secrets/TwitterConsumerSecret)"
+          }
+        },
+        "location": {
+            "value": "West US 2"
+        }
+    }
+}

@@ -15,7 +15,7 @@
   ],
   "containers": [
     "azure-webjobs-hosts",
-    "azure-webjobs-secrets",
+    "insights-logs-auditevent",
     "twitchsubscriptions"
   ]
 }

@@ -1,3 +1,12 @@
 {
-    "version": "2.0"
+    "version": "2.0",
+    "logging": {
+      "applicationInsights": {
+        "samplingSettings": {
+          "isEnabled": false,
+          "maxTelemetryItemsPerSecond" : 100,
+          "excludedTypes": "Request;Exception"
+        }
+      }
+    }
 }

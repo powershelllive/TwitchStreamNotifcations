@@ -230,7 +230,7 @@ namespace Markekraus.TwitchStreamNotifications
             var userId = await GetTwitchStreamUserId(Subscription.TwitchName, Log);
             Log.LogInformation($"GetTwitchSubscriptionEvents UserID: {userId}");
 
-             var requestUri = string.Format(TwitchChannelEventUriTemplate, userId);
+            var requestUri = string.Format(TwitchChannelEventUriTemplate, userId);
             Log.LogInformation($"GetTwitchSubscriptionEvents RequestUri: {requestUri}");
 
             var message = new HttpRequestMessage()
@@ -352,11 +352,13 @@ namespace Markekraus.TwitchStreamNotifications
             var requestUri = $"{TwitchGamesEndpointUri}?id={GameId}";
             Log.LogInformation($"GetGame RequestUri: {requestUri}");
 
+            var authToken = await GetOAuthResponse(Log);
             var message = new HttpRequestMessage()
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(requestUri)
             };
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
             var httpResponse = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);

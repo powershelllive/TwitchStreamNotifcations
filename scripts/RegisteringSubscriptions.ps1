@@ -68,6 +68,9 @@ function Get-TwitchUser {
         $BaseUri = 'https://api.twitch.tv/helix/users'
     )
 
+    begin {
+        $TwitchToken = Get-TwitchOAuthToken -TwitchApp $TwitchApp
+    }
     process {
         foreach ($Stream in $StreamName) {
             $Params = @{
@@ -75,6 +78,7 @@ function Get-TwitchUser {
                 Uri = '{0}?login={1}' -f $BaseUri, $Stream
                 Headers = @{
                     'Client-ID' = $TwitchApp.ClientId
+                    'Authorization' = 'Bearer {0}' -f $TwitchToken.AccessToken
                 }
             }
             (Invoke-RestMethod @Params).data
@@ -171,6 +175,7 @@ function Get-TwitchStreamWebhookSubscription {
             Uri = '{0}/?first={1}' -f $BaseUri, $First
             Method = 'GET'
             Headers = @{
+                'Client-Id' = $TwitchApp.ClientId
                 'Authorization' = 'Bearer {0}' -f $AccessToken.AccessToken
             }
             ContentType = 'application/json'
@@ -292,7 +297,7 @@ $HubSecret = Read-Host -AsSecureString
 $HubSecret = ([pscredential]::new('foo', $HubSecret)).GetNetworkCredential().Password
 
 $TwitchApp = New-TwitchApp -AppCredentials $AppCreds -RedirectUri 'https://127.0.0.1/'
-Get-TwitchUser -StreamName markekraus -TwitchApp $TwitchApp
+Get-TwitchUser -StreamName markekraus -TwitchApp $TwitchApp -TwitchToken $TwitchToken
 $Result = Register-TwitchStreamWebhookSubscription -StreamName 'markekraus' -HubSecret $HubSecret -HubLeaseSeconds 0 -TwitchApp $TwitchApp
 
 $Subscriptions = Get-TwitchStreamWebhookSubscription -TwitchApp $TwitchApp -First 100

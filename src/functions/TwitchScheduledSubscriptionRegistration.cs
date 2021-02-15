@@ -13,7 +13,7 @@ namespace Markekraus.TwitchStreamNotifications
     {
         [FunctionName("TwitchScheduledSubscriptionRegistration")]
         public static async Task Run(
-            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer,
+            [TimerTrigger("0 0 * * * *")] TimerInfo myTimer,
             [Blob("%TwitchSubscriptionBlob%", Connection = "TwitchStreamStorage")] string SubscriptionJsonContent,
             [Queue("%TwitchSubscribeQueue%", Connection = "TwitchStreamStorage")] IAsyncCollector<TwitchSubscription> SubscribeQueue,
             [Queue("%TwitchUnsubscribeQueue%", Connection = "TwitchStreamStorage")] IAsyncCollector<TwitchSubscription> UnsubscribeQueue,

@@ -1,6 +1,5 @@
 <Project>
   <PropertyGroup>
-        <!-- <OutputPath>..\bin\$(AssemblyName)\$(Configuration)</OutputPath> -->
         <BaseIntermediateOutputPath>..\obj\$(AssemblyName)</BaseIntermediateOutputPath>
         <MSBuildProjectExtensionsPath>..\obj\$(AssemblyName)</MSBuildProjectExtensionsPath>
     </PropertyGroup>

@@ -11,7 +11,7 @@ namespace Markekraus.TwitchStreamNotifications
     {
         [FunctionName("TwitchChannelEventLookup")]
         public static async Task Run(
-            [QueueTrigger("%TwitchChannelEventLookupQueue%", Connection = "TwitchStreamStorage")]TwitchSubscription Subscription,
+            [QueueTrigger("%TwitchChannelEventLookupQueue%", Connection = "TwitchStreamStorage")] TwitchSubscription Subscription,
             [Queue("%TwitchChannelEventProcessQueue%", Connection = "TwitchStreamStorage")] IAsyncCollector<TwitchChannelEventItem> EventProccessQueue,
             ILogger log)
         {
@@ -22,7 +22,8 @@ namespace Markekraus.TwitchStreamNotifications
             foreach (var channelEvent in response.Events)
             {
                 log.LogInformation($"TwitchChannelEventLookup Queing event {channelEvent.Id} for channel {Subscription.TwitchName}");
-                await EventProccessQueue.AddAsync(new TwitchChannelEventItem(){
+                await EventProccessQueue.AddAsync(new TwitchChannelEventItem()
+                {
                     Event = channelEvent,
                     Subscription = Subscription
                 });

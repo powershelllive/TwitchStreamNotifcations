@@ -1,5 +1,8 @@
-$Parameters = Get-Content '.\main.parameters.json' | ConvertFrom-Json
-$SystemName = $Parameters.parameters.systemName.value
+param(
+    [Parameter(Mandatory)]
+    $SystemName
+)
+
 Push-Location '..\src'
 func azure functionapp publish $SystemName
 Pop-Location

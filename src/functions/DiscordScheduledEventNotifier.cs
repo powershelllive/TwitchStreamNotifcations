@@ -12,7 +12,7 @@ namespace Markekraus.TwitchStreamNotifications
 
         [FunctionName("DiscordScheduledEventNotifier")]
         public static async Task Run(
-            [QueueTrigger("%DiscordEventNotificationsQueue%", Connection = "TwitchStreamStorage")]TwitchScheduledChannelEvent ScheduledEvent,
+            [QueueTrigger("%DiscordEventNotificationsQueue%", Connection = "TwitchStreamStorage")] TwitchScheduledChannelEvent ScheduledEvent,
             ILogger log)
         {
             log.LogInformation($"DiscordScheduledEventNotifier function processed: TwitchName {ScheduledEvent.EventItem.Subscription.TwitchName} DiscordName {ScheduledEvent.EventItem.Subscription.DiscordName} EventID {ScheduledEvent.EventItem.Event.Id} NotificationType {ScheduledEvent.Type}");
@@ -22,13 +22,13 @@ namespace Markekraus.TwitchStreamNotifications
             var eventType = ScheduledEvent.Type;
 
             if (eventType == TwitchScheduledChannelEventType.Unknown)
-            { 
+            {
                 log.LogInformation($"DiscordScheduledEventNotifier Processing event skipped. TwitchName {ScheduledEvent.EventItem.Subscription.TwitchName} DiscordName {ScheduledEvent.EventItem.Subscription.DiscordName} EventID {ScheduledEvent.EventItem.Event.Id} NotificationType {ScheduledEvent.Type}");
                 return;
             }
 
             string username;
-            if(string.IsNullOrWhiteSpace(subscription.DiscordName) || subscription.DiscordName == Utility.NameNullString)
+            if (string.IsNullOrWhiteSpace(subscription.DiscordName) || subscription.DiscordName == Utility.NameNullString)
             {
                 username = subscription.TwitchName;
                 log.LogInformation($"DiscordScheduledEventNotifier Stream username {username} will be used");
@@ -42,7 +42,8 @@ namespace Markekraus.TwitchStreamNotifications
             string eventUri = $"https://www.twitch.tv/events/{channelEvent.Id}";
             log.LogInformation($"DiscordScheduledEventNotifier Event Uri: {eventUri}");
 
-            var myDiscordMessage = new DiscordMessage(){
+            var myDiscordMessage = new DiscordMessage()
+            {
                 Content = string.Format(
                     DiscordMessageTemplate,
                     eventUri,

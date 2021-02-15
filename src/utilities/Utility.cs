@@ -33,29 +33,29 @@ namespace Markekraus.TwitchStreamNotifications
             await PrepareRequestBody(request);
             var secretBytes = Encoding.UTF8.GetBytes(secret);
 
-                using (HMACSHA256 hasher = new HMACSHA256(secretBytes))
+            using (HMACSHA256 hasher = new HMACSHA256(secretBytes))
+            {
+                try
                 {
-                    try
+                    Stream inputStream = request.Body;
+
+                    int bytesRead;
+                    byte[] buffer = new byte[4096];
+
+                    while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                     {
-                        Stream inputStream = request.Body;
-
-                        int bytesRead;
-                        byte[] buffer = new byte[4096];
-
-                        while ((bytesRead = await inputStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                        {
-                            hasher.TransformBlock(buffer, inputOffset: 0, inputCount: bytesRead,
-                                outputBuffer: null, outputOffset: 0);
-                        }
-
-                        hasher.TransformFinalBlock(Array.Empty<byte>(), inputOffset: 0, inputCount: 0);
-
-                        return hasher.Hash;
+                        hasher.TransformBlock(buffer, inputOffset: 0, inputCount: bytesRead,
+                            outputBuffer: null, outputOffset: 0);
                     }
-                    finally
-                    {
-                        request.Body.Seek(0L, SeekOrigin.Begin);
-                    }
+
+                    hasher.TransformFinalBlock(Array.Empty<byte>(), inputOffset: 0, inputCount: 0);
+
+                    return hasher.Hash;
+                }
+                finally
+                {
+                    request.Body.Seek(0L, SeekOrigin.Begin);
+                }
             }
         }
 

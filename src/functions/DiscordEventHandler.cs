@@ -19,7 +19,7 @@ namespace Markekraus.TwitchStreamNotifications
             log.LogInformation($"DiscordEventHandler processing: {StreamEvent.UserName} type {StreamEvent.Type} started at {StreamEvent.StartedAt}");
 
             if (StreamEvent.Type != "live")
-            { 
+            {
                 log.LogInformation($"DiscordEventHandler Processing event skipped. type: {StreamEvent.Type}");
                 return;
             }

@@ -1,8 +1,8 @@
 using System;
-using Markekraus.TwitchStreamNotifications.Models;
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using Markekraus.TwitchStreamNotifications.Models;
 
 namespace Markekraus.TwitchStreamNotifications
 {
@@ -11,8 +11,8 @@ namespace Markekraus.TwitchStreamNotifications
         private readonly static string TwitterTweetTemplate = Environment.GetEnvironmentVariable("TwitterScheduledEventTweetTemplate");
 
         [FunctionName("TwitterScheduledEventNotifier")]
-        public static void Run(
-            [QueueTrigger("%TwitterEventNotificationsQueue%", Connection = "TwitchStreamStorage")]TwitchScheduledChannelEvent ScheduledEvent,
+        public static async Task Run(
+            [QueueTrigger("%TwitterEventNotificationsQueue%", Connection = "TwitchStreamStorage")] TwitchScheduledChannelEvent ScheduledEvent,
             ILogger log)
         {
             log.LogInformation($"TwitterScheduledEventNotifier function processed: TwitchName {ScheduledEvent.EventItem.Subscription.TwitchName} TwitterName {ScheduledEvent.EventItem.Subscription.TwitterName} EventID {ScheduledEvent.EventItem.Event.Id} NotificationType {ScheduledEvent.Type}");
@@ -22,13 +22,13 @@ namespace Markekraus.TwitchStreamNotifications
             var eventType = ScheduledEvent.Type;
 
             if (eventType == TwitchScheduledChannelEventType.Unknown)
-            { 
+            {
                 log.LogInformation($"TwitterScheduledEventNotifier Processing event skipped. TwitchName {ScheduledEvent.EventItem.Subscription.TwitchName} TwitterName {ScheduledEvent.EventItem.Subscription.TwitterName} EventID {ScheduledEvent.EventItem.Event.Id} NotificationType {ScheduledEvent.Type}");
                 return;
             }
 
             string username;
-            if(string.IsNullOrWhiteSpace(subscription.TwitterName) || subscription.TwitterName == Utility.NameNullString)
+            if (string.IsNullOrWhiteSpace(subscription.TwitterName) || subscription.TwitterName == Utility.NameNullString)
             {
                 username = subscription.TwitchName;
                 log.LogInformation($"TwitterScheduledEventNotifier Stream username {username} will be used");
@@ -50,7 +50,7 @@ namespace Markekraus.TwitchStreamNotifications
                 channelEvent.StartTime.ToString("u"),
                 channelEvent.Title);
 
-            TwitterClient.PublishTweet(myTweet, log);
+            await TwitterClient.PublishTweet(myTweet, log);
         }
     }
 }

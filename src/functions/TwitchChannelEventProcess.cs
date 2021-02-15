@@ -11,7 +11,7 @@ namespace Markekraus.TwitchStreamNotifications
     {
         [FunctionName("TwitchChannelEventProcess")]
         public static async Task Run(
-            [QueueTrigger("%TwitchChannelEventProcessQueue%", Connection = "TwitchStreamStorage")]TwitchChannelEventItem ChannelEventItem,
+            [QueueTrigger("%TwitchChannelEventProcessQueue%", Connection = "TwitchStreamStorage")] TwitchChannelEventItem ChannelEventItem,
             [Queue("%DiscordEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> DiscordQueue,
             [Queue("%TwitterEventNotificationsQueue%")] IAsyncCollector<TwitchScheduledChannelEvent> TwitterQueue,
             ILogger log)
@@ -39,7 +39,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             var scheduledEvent = new TwitchScheduledChannelEvent(ChannelEventItem);
 
-            if(channelEvent.StartTime >= hourStart && channelEvent.StartTime <= hourEnd)
+            if (channelEvent.StartTime >= hourStart && channelEvent.StartTime <= hourEnd)
             {
                 log.LogInformation($"TwitchChannelEventProcess TwitchName {ChannelEventItem.Subscription.TwitchName} EventId {ChannelEventItem.Event.Id} in an hour {channelEvent.StartTime}");
                 scheduledEvent.Type = TwitchScheduledChannelEventType.Hour;
@@ -60,7 +60,7 @@ namespace Markekraus.TwitchStreamNotifications
                 scheduledEvent.Type = TwitchScheduledChannelEventType.Unknown;
             }
 
-            if(scheduledEvent.Type != TwitchScheduledChannelEventType.Unknown)
+            if (scheduledEvent.Type != TwitchScheduledChannelEventType.Unknown)
             {
                 log.LogInformation($"TwitchChannelEventProcess Queing TwitchName {scheduledEvent.EventItem.Subscription.TwitchName} EventId {scheduledEvent.EventItem.Event.Id} Type {scheduledEvent.Type}");
                 await DiscordQueue.AddAsync(scheduledEvent);

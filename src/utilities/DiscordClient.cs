@@ -23,13 +23,14 @@ namespace Markekraus.TwitchStreamNotifications
         {
             log.LogInformation($"SendDiscordMessageAsync DiscordMessage: {Message.Content}");
 
-            if(Message.Content.Length >= MaxMessageSize)
+            if (Message.Content.Length >= MaxMessageSize)
             {
                 log.LogError($"SendDiscordMessageAsync Discord messages is {Message.Content.Length} long and exceeds the {MaxMessageSize} max length.");
                 return null;
             }
 
-            if(Environment.GetEnvironmentVariable(Utility.DISABLE_NOTIFICATIONS).ToLower() == "true") {
+            if (Environment.GetEnvironmentVariable(Utility.DISABLE_NOTIFICATIONS).ToLower() == "true")
+            {
                 log.LogInformation("SendDiscordMessageAsync Notifications are disabled. exiting");
                 return null;
             }
@@ -47,14 +48,14 @@ namespace Markekraus.TwitchStreamNotifications
 
             var httpResponse = await client.SendAsync(httpMessage, HttpCompletionOption.ResponseHeadersRead);
 
-            if(!httpResponse.IsSuccessStatusCode)
+            if (!httpResponse.IsSuccessStatusCode)
             {
                 log.LogError($"SendDiscordMessageAsync Request Failed");
             }
             log.LogInformation($"SendDiscordMessageAsync Success: {httpResponse.IsSuccessStatusCode}");
             log.LogInformation($"SendDiscordMessageAsync StatusCode: {httpResponse.StatusCode}");
             log.LogInformation($"SendDiscordMessageAsync ReasonPhrase: {httpResponse.ReasonPhrase}");
-            
+
             var responseBody = await httpResponse.Content.ReadAsStringAsync();
             log.LogInformation($"SendDiscordMessageAsync Response:");
             log.LogInformation(responseBody);

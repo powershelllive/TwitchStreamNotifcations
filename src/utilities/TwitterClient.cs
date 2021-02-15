@@ -1,6 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Tweetinvi;
+using Tweetinvi.Exceptions;
 using Tweetinvi.Models;
 
 namespace Markekraus.TwitchStreamNotifications
@@ -14,7 +15,7 @@ namespace Markekraus.TwitchStreamNotifications
         private readonly static string TwitterTweetTemplate = Environment.GetEnvironmentVariable("TwitterTweetTemplate");
         public const int MaxTweetLength = 280;
 
-        public static ITweet PublishTweet(string TweetMessage, ILogger log)
+        public static async Task<ITweet> PublishTweet(string TweetMessage, ILogger log)
         {
             log.LogInformation($"PublishTweet Tweet: {TweetMessage}");
 
@@ -23,23 +24,29 @@ namespace Markekraus.TwitchStreamNotifications
                 log.LogWarning($"PublishTweet Tweet too long {TweetMessage.Length} max {MaxTweetLength}");
             }
 
-            if(Environment.GetEnvironmentVariable(Utility.DISABLE_NOTIFICATIONS).ToLower() == "true") {
+            if (Environment.GetEnvironmentVariable(Utility.DISABLE_NOTIFICATIONS).ToLower() == "true")
+            {
                 log.LogInformation("PublishTweet Notifications are disabled. exiting");
                 return null;
             }
 
-            Auth.SetUserCredentials(ConsumerKey, ConsumerSecret, AccessToken, AccessTokenSecret);
-            var publishedTweet = Tweet.PublishTweet(TweetMessage);
-            // by default TweetInvi doesn't throw exceptions: https://github.com/linvi/tweetinvi/wiki/Exception-Handling
-            if (publishedTweet == null)
+            try
             {
-                log.LogError($"PublishTweet Failed to publish");
+                var tweetinvi = new Tweetinvi.TwitterClient(ConsumerKey, ConsumerSecret, AccessToken, AccessTokenSecret);
+                var publishedTweet = await tweetinvi.Tweets.PublishTweetAsync(TweetMessage);
+                log.LogInformation($"PublishTweet published tweet {publishedTweet.Id}");
+                return publishedTweet;
             }
-            else
+            catch (TwitterException e)
             {
-                log.LogInformation($"PublishTweet Published tweet {publishedTweet.Id}");
+                log.LogError($"Failed to tweet: {e.ToString()}");
             }
-            return publishedTweet;
+            catch (Exception e)
+            {
+                log.LogError($"Unhandled error when sending tweet: {e.ToString()}");
+                throw;
+            }
+            return null;
         }
     }
 }

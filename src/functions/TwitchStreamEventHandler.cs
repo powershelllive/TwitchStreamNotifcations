@@ -14,7 +14,7 @@ namespace Markekraus.TwitchStreamNotifications
     {
         [FunctionName("TwitchStreamEventHandler")]
         public static async Task Run(
-            [QueueTrigger("%TwitchStreamActivity%", Connection = "TwitchStreamStorage")]Stream StreamEvent,
+            [QueueTrigger("%TwitchStreamActivity%", Connection = "TwitchStreamStorage")] Stream StreamEvent,
             [Queue("%TwitterNotifications%")] IAsyncCollector<Stream> TwitterQueue,
             [Queue("%DiscordNotifications%")] IAsyncCollector<Stream> DiscordQueue,
             [Table("%TwitchNotificationsTable%")] CloudTable NotificationsTable,
@@ -40,13 +40,13 @@ namespace Markekraus.TwitchStreamNotifications
                 }
                 else
                 {
-                    log.LogError(e,"Unkown Exception");
+                    log.LogError(e, "Unkown Exception");
                     return;
                 }
             }
             catch (Exception e)
             {
-                log.LogError(e,"Unkown Exception");
+                log.LogError(e, "Unkown Exception");
                 return;
             }
 
@@ -61,7 +61,7 @@ namespace Markekraus.TwitchStreamNotifications
             catch (Exception e)
             {
                 log.LogWarning($"Notifications for StreamName {StreamEvent.UserName} Id {StreamEvent.Id} have already been queued???");
-                log.LogError(e,"Exception");
+                log.LogError(e, "Exception");
                 return;
             }
 

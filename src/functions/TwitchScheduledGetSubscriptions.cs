@@ -11,7 +11,7 @@ namespace Markekraus.TwitchStreamNotifications
     {
         [FunctionName("TwitchScheduledGetSubscriptions")]
         public static async Task Run(
-            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer,
+            [TimerTrigger("0 0 * * * *")] TimerInfo myTimer,
             [Queue("%TwitchChannelEventLookupQueue%", Connection = "TwitchStreamStorage")] IAsyncCollector<TwitchSubscription> EventLookupQueue,
             ILogger log)
         {

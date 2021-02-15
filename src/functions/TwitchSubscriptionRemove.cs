@@ -22,7 +22,8 @@ namespace Markekraus.TwitchStreamNotifications
             {
                 await TwitchClient.UnsubscribeTwitchStreamWebhook(Subscription, log);
                 log.LogInformation($"TwitchSubscriptionRemove Unsubscribed TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
-            } catch (System.Exception e)
+            }
+            catch (System.Exception e)
             {
                 log.LogError(e, "TwitchSubscriptionRemove exception unsubscribing");
             }

@@ -22,7 +22,8 @@ namespace Markekraus.TwitchStreamNotifications
             {
                 await TwitchClient.SubscribeTwitchStreamWebhook(Subscription, log);
                 log.LogInformation($"TwitchSubscriptionAdd Subscribed TwitchName {Subscription.TwitchName} TwitterName {Subscription.TwitterName}");
-            } catch (System.Exception e)
+            }
+            catch (System.Exception e)
             {
                 log.LogError(e, "TwitchSubscriptionAdd exception subscribing");
             }

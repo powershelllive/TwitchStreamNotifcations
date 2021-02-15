@@ -3,8 +3,13 @@
   "tasks": [
     {
       "label": "clean",
-      "command": "dotnet clean",
-      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+      ],
+      "type": "process",
       "problemMatcher": "$msCompile",
       "options": {
         "cwd": "${workspaceFolder}/src"
@@ -12,8 +17,13 @@
     },
     {
       "label": "build",
-      "command": "dotnet build",
-      "type": "shell",
+      "command": "dotnet",
+      "args": [
+				"build",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+      "type": "process",
       "dependsOn": "clean",
       "group": {
         "kind": "build",
@@ -26,8 +36,15 @@
     },
     {
       "label": "clean release",
-      "command": "dotnet clean --configuration Release",
-      "type": "shell",
+      "command": "dotnet",
+      "args": [
+				"clean",
+				"--configuration",
+				"Release",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+      "type": "process",
       "problemMatcher": "$msCompile",
       "options": {
         "cwd": "${workspaceFolder}/src"
@@ -35,8 +52,15 @@
     },
     {
       "label": "publish",
-      "command": "dotnet publish --configuration Release",
-      "type": "shell",
+      "command": "dotnet",
+      "args": [
+				"publish",
+				"--configuration",
+				"Release",
+				"/property:GenerateFullPaths=true",
+				"/consoleloggerparameters:NoSummary"
+			],
+      "type": "process",
       "dependsOn": "clean release",
       "problemMatcher": "$msCompile",
       "options": {
@@ -44,15 +68,14 @@
       }
     },
     {
-      "label": "runFunctionsHost",
-      "type": "shell",
-      "dependsOn": "build",
-      "command": "func host start",
-      "isBackground": true,
-      "problemMatcher": "$func-watch",
-      "options": {
-        "cwd": "${workspaceFolder}/src"
-      }
-    }
+			"type": "func",
+			"dependsOn": "build",
+			"options": {
+				"cwd": "${workspaceFolder}/src/bin/Debug/netcoreapp3.1"
+			},
+			"command": "host start",
+			"isBackground": true,
+			"problemMatcher": "$func-dotnet-watch"
+		}
   ]
 }

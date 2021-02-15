@@ -37,7 +37,7 @@ namespace Markekraus.TwitchStreamNotifications
             Unsubscribe
         }
 
-        private static async Task<TwitchOAuthResponse> GetOAuthResponse (ILogger Log)
+        private static async Task<TwitchOAuthResponse> GetOAuthResponse(ILogger Log)
         {
             Log.LogInformation("GetOAuthResponse Begin");
             var dict = new Dictionary<string, string>();
@@ -54,13 +54,13 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(requestUri)
             };
-            message.Headers.TryAddWithoutValidation("Accept",Utility.ApplicationJsonContentType);
+            message.Headers.TryAddWithoutValidation("Accept", Utility.ApplicationJsonContentType);
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
             LogHttpResponse(response, "GetOAuthResponse", Log);
 
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 Log.LogInformation("ResponseBody:");
                 Log.LogInformation(responseBody);
@@ -88,15 +88,15 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(requestUri)
             };
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
-            
-            var response = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
+
+            var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
 
             LogHttpResponse(response, "GetTwitchWebhookSubscriptions", Log);
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 Log.LogInformation("GetTwitchWebhookSubscriptions End");
                 return null;
@@ -121,14 +121,14 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(requestUri)
             };
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
-            var response = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
+            var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
 
             LogHttpResponse(response, "GetTwitchStreamUserId", Log);
 
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 Log.LogInformation("GetTwitchStreamUserId End");
                 return null;
@@ -146,21 +146,21 @@ namespace Markekraus.TwitchStreamNotifications
             }
         }
 
-        public static async Task SubscribeTwitchStreamWebhook (TwitchSubscription Subscription,ILogger Log)
+        public static async Task SubscribeTwitchStreamWebhook(TwitchSubscription Subscription, ILogger Log)
         {
-           Log.LogInformation("SubscribeTwitchStreamWebhook Begin");
-           await SubscriptionActionTwitchStreamWebhook(Subscription, TwitchSubscriptionMode.Subscribe, Log);
-           Log.LogInformation("SubscribeTwitchStreamWebhook End");
+            Log.LogInformation("SubscribeTwitchStreamWebhook Begin");
+            await SubscriptionActionTwitchStreamWebhook(Subscription, TwitchSubscriptionMode.Subscribe, Log);
+            Log.LogInformation("SubscribeTwitchStreamWebhook End");
         }
 
-        public static async Task UnsubscribeTwitchStreamWebhook (TwitchSubscription Subscription,ILogger Log)
+        public static async Task UnsubscribeTwitchStreamWebhook(TwitchSubscription Subscription, ILogger Log)
         {
-           Log.LogInformation("UnsubscribeTwitchStreamWebhook Begin");
-           await SubscriptionActionTwitchStreamWebhook(Subscription, TwitchSubscriptionMode.Unsubscribe, Log);
-           Log.LogInformation("UnsubscribeTwitchStreamWebhook End");
+            Log.LogInformation("UnsubscribeTwitchStreamWebhook Begin");
+            await SubscriptionActionTwitchStreamWebhook(Subscription, TwitchSubscriptionMode.Unsubscribe, Log);
+            Log.LogInformation("UnsubscribeTwitchStreamWebhook End");
         }
 
-        private static async Task SubscriptionActionTwitchStreamWebhook(TwitchSubscription Subscription, TwitchSubscriptionMode SubscriptionMode ,ILogger Log)
+        private static async Task SubscriptionActionTwitchStreamWebhook(TwitchSubscription Subscription, TwitchSubscriptionMode SubscriptionMode, ILogger Log)
         {
             Log.LogInformation("SubscriptionActionTwitchStreamWebhook Begin");
             Log.LogInformation($"TwitchName: {Subscription.TwitchName}");
@@ -196,7 +196,7 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(TwitchWebhooksHubEndpointUri)
             };
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
             var response = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
@@ -209,9 +209,9 @@ namespace Markekraus.TwitchStreamNotifications
             Log.LogInformation("SubscriptionActionTwitchStreamWebhook End");
         }
 
-        private static void LogHttpResponse (HttpResponseMessage Response, string Operation, ILogger Log)
+        private static void LogHttpResponse(HttpResponseMessage Response, string Operation, ILogger Log)
         {
-            if(!Response.IsSuccessStatusCode)
+            if (!Response.IsSuccessStatusCode)
             {
                 Log.LogError($"{Operation} Request Failed");
             }
@@ -220,7 +220,7 @@ namespace Markekraus.TwitchStreamNotifications
             Log.LogInformation($"ReasonPhrase: {Response.ReasonPhrase}");
         }
 
-        public static async Task<TwitchChannelEventResponse> GetTwitchSubscriptionEvents (TwitchSubscription Subscription, ILogger Log)
+        public static async Task<TwitchChannelEventResponse> GetTwitchSubscriptionEvents(TwitchSubscription Subscription, ILogger Log)
         {
             Log.LogInformation("GetTwitchSubscriptionEvents Begin");
             Log.LogInformation($"GetTwitchSubscriptionEvents TwitchName: {Subscription.TwitchName}");
@@ -240,11 +240,11 @@ namespace Markekraus.TwitchStreamNotifications
             };
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
-            var httpResponse = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
+            var httpResponse = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
 
             LogHttpResponse(httpResponse, "GetTwitchSubscriptionEvents", Log);
 
-            if(!httpResponse.IsSuccessStatusCode)
+            if (!httpResponse.IsSuccessStatusCode)
             {
                 Log.LogInformation("GetTwitchSubscriptionEvents End");
                 return null;
@@ -262,7 +262,7 @@ namespace Markekraus.TwitchStreamNotifications
             }
         }
 
-        public static async Task<TwitchSubscriptionRegistrationResponse> InvokeSubscriptionRegistration (
+        public static async Task<TwitchSubscriptionRegistrationResponse> InvokeSubscriptionRegistration(
             IList<TwitchSubscription> TwitchSubscriptions,
             IAsyncCollector<TwitchSubscription> SubscribeQueue,
             IAsyncCollector<TwitchSubscription> UnsubscribeQueue,
@@ -279,12 +279,12 @@ namespace Markekraus.TwitchStreamNotifications
             response.CurrentSubscriptions = currentSubscriptions;
 
             log.LogInformation($"{logPrefix} Create currentSubDictionary dictionary");
-            var currentSubDictionary = new Dictionary<Tuple<string, string, string>,TwitchSubscription>();
-            var currentWebhookSubDictionary = new Dictionary<Tuple<string, string, string>,TwitchWebhookSubscription>();
+            var currentSubDictionary = new Dictionary<Tuple<string, string, string>, TwitchSubscription>();
+            var currentWebhookSubDictionary = new Dictionary<Tuple<string, string, string>, TwitchWebhookSubscription>();
             string currentTwittername;
             string currentDiscordname;
             string currentTwitchname;
-            foreach(var subscription in currentSubscriptions)
+            foreach (var subscription in currentSubscriptions)
             {
                 currentTwittername = string.IsNullOrWhiteSpace(subscription.Subscription.TwitterName) ? Utility.NameNullString : subscription.Subscription.TwitterName.ToLower();
                 currentDiscordname = string.IsNullOrWhiteSpace(subscription.Subscription.DiscordName) ? Utility.NameNullString : subscription.Subscription.DiscordName.ToLower();
@@ -292,14 +292,14 @@ namespace Markekraus.TwitchStreamNotifications
                 log.LogInformation($"{logPrefix} Add TwitchName {subscription.Subscription.TwitchName} TwitterName {subscription.Subscription.TwitterName} DiscordName {subscription.Subscription.DiscordName}");
                 var keyTuple = new Tuple<string, string, string>(currentTwitchname, currentTwittername, currentDiscordname);
                 currentSubDictionary.Add(
-                    keyTuple, 
+                    keyTuple,
                     subscription.Subscription);
                 currentWebhookSubDictionary.Add(keyTuple, subscription);
             }
 
             log.LogInformation($"{logPrefix} Create requestedSubDictionary dictionary");
-            var requestedSubDictionary = new Dictionary<Tuple<string, string, string>,TwitchSubscription>();
-            foreach(var subscription in TwitchSubscriptions)
+            var requestedSubDictionary = new Dictionary<Tuple<string, string, string>, TwitchSubscription>();
+            foreach (var subscription in TwitchSubscriptions)
             {
                 currentTwittername = string.IsNullOrWhiteSpace(subscription.TwitterName) ? Utility.NameNullString : subscription.TwitterName.ToLower();
                 currentDiscordname = string.IsNullOrWhiteSpace(subscription.DiscordName) ? Utility.NameNullString : subscription.DiscordName.ToLower();
@@ -312,7 +312,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             log.LogInformation($"{logPrefix} Find missing subscriptions to add");
             response.AddSubscriptions = new List<TwitchSubscription>();
-            foreach(var missing in Enumerable.Except(requestedSubDictionary.Keys, currentSubDictionary.Keys))
+            foreach (var missing in Enumerable.Except(requestedSubDictionary.Keys, currentSubDictionary.Keys))
             {
                 log.LogInformation($"{logPrefix} Add Queue TwitchName {requestedSubDictionary[missing].TwitchName} TwitterName {requestedSubDictionary[missing].TwitterName}");
                 await SubscribeQueue.AddAsync(requestedSubDictionary[missing]);
@@ -321,7 +321,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             log.LogInformation($"{logPrefix} Find extra subscriptions to remove");
             response.RemoveSubscriptions = new List<TwitchSubscription>();
-            foreach(var extra in Enumerable.Except(currentSubDictionary.Keys, requestedSubDictionary.Keys))
+            foreach (var extra in Enumerable.Except(currentSubDictionary.Keys, requestedSubDictionary.Keys))
             {
                 log.LogInformation($"{logPrefix} Remove Queue TwitchName {currentSubDictionary[extra].TwitchName} TwitterName {currentSubDictionary[extra].TwitterName}");
                 await UnsubscribeQueue.AddAsync(currentSubDictionary[extra]);
@@ -333,7 +333,7 @@ namespace Markekraus.TwitchStreamNotifications
             foreach (var renewableKey in renewalableKeyList)
             {
                 var renewableSub = currentWebhookSubDictionary[renewableKey];
-                if(DateTime.Parse(renewableSub.ExpiresAt).ToUniversalTime() <= DateTime.UtcNow.AddHours(1))
+                if (DateTime.Parse(renewableSub.ExpiresAt).ToUniversalTime() <= DateTime.UtcNow.AddHours(1))
                 {
                     log.LogInformation($"{logPrefix} Renew Queue TwitchName {renewableSub.Subscription.TwitchName} TwitterName {renewableSub.Subscription.TwitterName}");
                     await SubscribeQueue.AddAsync(renewableSub.Subscription);
@@ -358,14 +358,14 @@ namespace Markekraus.TwitchStreamNotifications
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(requestUri)
             };
-            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer",authToken.AccessToken);
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken.AccessToken);
             message.Headers.TryAddWithoutValidation(ClientIdHeaderName, clientId);
 
-            var httpResponse = await client.SendAsync(message,HttpCompletionOption.ResponseContentRead);
+            var httpResponse = await client.SendAsync(message, HttpCompletionOption.ResponseContentRead);
 
             LogHttpResponse(httpResponse, "GetGame", Log);
 
-            if(!httpResponse.IsSuccessStatusCode)
+            if (!httpResponse.IsSuccessStatusCode)
             {
                 Log.LogInformation("GetGame End");
                 return null;

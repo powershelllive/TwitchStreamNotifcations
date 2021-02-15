@@ -9,10 +9,16 @@ $ArmParameters = Get-Content -Path $ParametersPath | ConvertFrom-Json
 $Location = $ArmParameters.parameters.location.value
 
 $null = az group create --location $Location --name $RGName
-    
+
 $DeploymentResult = az deployment group create -g $RGName -f .\main.json -p $ParametersPath --only-show-errors | ConvertFrom-Json
 if($DeploymentResult.properties.provisioningState -ne 'Succeeded') {
-    $PSCmdlet.ThrowTerminatingError($DeploymentResult.properties.error)
+    if($DeploymentResult.properties.error) {
+        $Message = $DeploymentResult.properties.error
+    }
+    else {
+        $Message = 'Failed to deploy'
+    }
+    throw $Message
 }
 $StorageAccount = $DeploymentResult.properties.outputs.storageAccountName.value
 

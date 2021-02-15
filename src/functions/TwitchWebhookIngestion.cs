@@ -40,7 +40,8 @@ namespace Markekraus.TwitchStreamNotifications
                 DiscordName = DiscordName != Utility.NameNullString ? DiscordName : string.Empty
             };
 
-            if(Req.Query.TryGetValue("hub.mode", out var hubMode)){
+            if (Req.Query.TryGetValue("hub.mode", out var hubMode))
+            {
                 Log.LogInformation($"Received hub.mode Query string: {Req.QueryString}");
                 if (hubMode.ToString().ToLower() == "subscribe" || hubMode.ToString().ToLower() == "unsubscribe")
                 {
@@ -79,7 +80,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             Log.LogInformation($"Request contains {webhook.Data.Count} objects.");
 
-            if(!Req.Headers.TryGetValue(SignatureHeader, out var signature))
+            if (!Req.Headers.TryGetValue(SignatureHeader, out var signature))
             {
                 Log.LogError($"Missing {SignatureHeader} header");
                 return new BadRequestResult();
@@ -108,7 +109,7 @@ namespace Markekraus.TwitchStreamNotifications
 
             var actualHash = await Utility.ComputeRequestBodySha256HashAsync(Req, HashSecret);
 
-            if(!Utility.SecretEqual(expectedHash, actualHash))
+            if (!Utility.SecretEqual(expectedHash, actualHash))
             {
                 Log.LogError($"Signature mismatch. actaulHash {Convert.ToBase64String(actualHash)} did not match expectedHash {Convert.ToBase64String(expectedHash)}");
                 return new BadRequestObjectResult(signature);

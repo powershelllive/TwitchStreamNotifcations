@@ -1,0 +1,35 @@
+name: UploadSubscriptions
+
+on:
+  push:
+    branches: master
+    paths: config/Subscriptions.json
+
+  workflow_dispatch:
+
+jobs:
+  SubscriptionsUpdate:
+    
+    runs-on: ubuntu-latest
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Upload subscriptions to file share
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.19.1
+          inlineScript: |
+            az storage blob upload                                \
+              --container-name 'twitchsubscriptions'              \
+              --file 'config/Subscriptions.json'                  \
+              --name 'Subscriptions.json'                         \
+              --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+              --account-key  ${{ secrets.AZURE_STORAGE_KEY }}
+      
+      - name: Trigger update Subscriptions
+        shell: pwsh
+        run: ./scripts/Invoke-TwitchSubscriptionRegistration.ps1
+        env:
+          FunctionCode: ${{ secrets.SUBSCRIPTION_REGISTRATION_FUNCTION_CODE }}

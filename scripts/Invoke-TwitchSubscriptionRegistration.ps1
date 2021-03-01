@@ -13,8 +13,8 @@ function Invoke-TwitchSubscriptionRegistration {
 
         [Parameter(DontShow)]
         [string]
-        $FunctionUri = 'https://twitchstreamnotifications.azurewebsites.net/api/TwitchSubscriptionRegistration'
-        )
+        $FunctionUri = 'https://twitchstreamnotifications2.azurewebsites.net/api/TwitchSubscriptionRegistration'
+    )
 
     end {
         try {

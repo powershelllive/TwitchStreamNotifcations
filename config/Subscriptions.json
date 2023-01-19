@@ -22,7 +22,7 @@
     {
       "twitchname": "PowerShellTeam",
       "twittername": "PowerShell_Team",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "tylerleonhardt",
@@ -32,42 +32,37 @@
     {
       "twitchname": "potatoqualitee",
       "twittername": "cl",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "kevinmarquette",
       "twittername": "kevinmarquette",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "glennsarti",
       "twittername": "GlennSarti",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "veronicageek",
       "twittername": "veronicageek",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "powershelllive",
       "twittername": "PowerShellLive",
-      "discordname": "--"
-    },
-    {
-      "twitchname": "vexx32",
-      "twittername": "vexx32",
-      "discordname": "283711673934807042"
+      "discordname": ""
     },
     {
       "twitchname": "guestconfig",
       "twittername": "migreene",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "theposhwolf",
       "twittername": "ThePoShWolf",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "pwshdooduk",
@@ -81,13 +76,13 @@
     },
     {
       "twitchname": "charlie_schmidt",
-      "twittername": "--",
+      "twittername": "",
       "discordname": "252617743612903424"
     },
     {
       "twitchname": "rchaganti",
       "twittername": "ravikanth",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "poshcode",
@@ -112,32 +107,22 @@
     {
       "twitchname": "jwtruher",
       "twittername": "jwtruher",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "brispug",
-      "twittername": "--",
-      "discordname": "--"
-    },
-    {
-      "twitchname": "poshoholic",
-      "twittername": "poshoholic",
-      "discordname": "507970559737593866"
-    },
-    {
-      "twitchname": "DanielSSilvaDev",
-      "twittername": "DanielSilv9",
-      "discordname": "--"
+      "twittername": "",
+      "discordname": ""
     },
     {
       "twitchname": "windosnz",
       "twittername": "WindosNZ",
-      "discordname": "--"
+      "discordname": ""
     },
     {
       "twitchname": "bridgeconf",
-      "twittername": "--",
-      "discordname": "--"
+      "twittername": "",
+      "discordname": ""
     },
     {
       "twitchname": "SimonWse",
@@ -150,8 +135,8 @@
       "discordname": "430511869090856971"
     },
     {
-        "twitchname": "roberthstreaming",
-        "twittername": "roberthtweets",
-        "discordname": "182168962291859456"
+        "twitchname": "MrPowerShell",
+        "twittername": "jamesbru",
+        "discordname": "634881726824316940"
     }
 ]
